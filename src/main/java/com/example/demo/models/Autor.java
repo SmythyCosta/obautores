@@ -36,7 +36,7 @@ public class Autor implements Serializable{
 	@Column(name = "sexo", nullable = false)
 	private SexoEnum sexo;
 	
-	@Column(name = "email", nullable = false)
+	@Column(name = "email", unique=true)
 	private String email;
 	
 	@Column(name = "data_nascimento", nullable = false)

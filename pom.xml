@@ -73,6 +73,11 @@
 			<version>3.6</version>
 		</dependency>
 		
+		<dependency>
+	        <groupId>org.hibernate.validator</groupId>
+	        <artifactId>hibernate-validator</artifactId>
+	    </dependency>
+		
 		<!-- Swagger e Swagger UI -->
 		<dependency>
 		    <groupId>io.springfox</groupId>

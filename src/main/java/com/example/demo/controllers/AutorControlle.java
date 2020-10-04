@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -28,17 +28,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-
 import com.example.demo.dto.AutorDTO;
 import com.example.demo.enums.SexoEnum;
 import com.example.demo.models.Autor;
 import com.example.demo.repository.AutorRepository;
 import com.example.demo.response.Response;
 import com.example.demo.service.imp.AutorService;
+import com.example.demo.util.EmailUtil;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -107,7 +103,7 @@ public class AutorControlle {
 		
 		log.info("criando novo autor: {}", objDTO.toString());
 		Response<AutorDTO> response = new Response<AutorDTO>();
-		//validarFuncionario(objDTO, result);
+		ValidaAutor(objDTO, result);
 		Autor autor = this.parserToEntity(objDTO, result);
 		
 		if (result.hasErrors()) {
@@ -162,29 +158,18 @@ public class AutorControlle {
 		return ResponseEntity.ok(new Response<String>());		
 	}
 	
-	/**
-	 * Valida um funcionário, verificando se ele é existente e válido no
-	 * sistema.
-	 * 
-	 * @param objDTO
-	 * @param result
-	 */
-	/**
-	private void validarFuncionario(AutorDTO objDTO, BindingResult result) {
-		if (objDTO.getId() == null) {
-			result.addError(new ObjectError("funcionario", "Funcionário não informado."));
-			return;
-		}
 
-		log.info("Validando funcionário id {}: ", objDTO.getId());
-		//Optional<Funcionario> funcionario = this.funcionarioService.buscarPorId(objDTO.getFuncionarioId());
-		//if (!funcionario.isPresent()) {
-		//	result.addError(new ObjectError("funcionario", "Funcionário não encontrado. ID inexistente."));
-		//}
+	private void ValidaAutor(AutorDTO objDTO, BindingResult result) {
+		
+		if (!"".equals(objDTO.getEmail().trim())) {
+			if (EmailUtil.isValidEmail(objDTO.getEmail())) {
+				result.addError(new ObjectError("Email", "Email inválido."));
+				return;
+			}
+		}
 		return;
 	}
-	*/
-	
+		
 	private Autor parserToEntity(AutorDTO dto, BindingResult result) throws ParseException {
 		
 		Autor entity = new Autor();
