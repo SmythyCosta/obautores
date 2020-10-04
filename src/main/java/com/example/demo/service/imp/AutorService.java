@@ -1,5 +1,7 @@
 package com.example.demo.service.imp;
 
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +36,15 @@ public class AutorService implements BaseService<Autor> {
 
 	@Override
 	public void remover(Long id) {
-		// TODO Auto-generated method stub
+		log.info("Removendo o Autor ID {}", id);
+		this.rep.deleteById(id);
 		
+	}
+
+	@Override
+	public Optional<Autor> buscarPorId(Long id) {
+		log.info("Buscando um Autor pelo ID {}", id);
+		return this.rep.findById(id);
 	}
 
 }

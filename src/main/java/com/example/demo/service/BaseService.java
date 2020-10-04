@@ -1,5 +1,7 @@
 package com.example.demo.service;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
@@ -14,7 +16,7 @@ public interface BaseService<T> {
 	Page<T> listarTodos(PageRequest pageRequest);
 	
 	/**
-	 * Persiste um obj na base de dados.
+	 * Persiste um Obj na base de dados.
 	 * 
 	 * @param id
 	 * @return Obj
@@ -22,13 +24,19 @@ public interface BaseService<T> {
 	T persistir(T t);
 	
 	
-	//Optional<T> buscarPorId(Long id);
+	/**
+	 * Retorna um Obj por ID.
+	 * 
+	 * @param id
+	 * @return Optional<Lancamento>
+	 */
+	Optional<T> buscarPorId(Long id);
 	
 
 	//Optional<T> buscarPorEmail(String email);
 	
 	/**
-	 * Deleta um obj base de dados.
+	 * Deleta um Obj base de dados.
 	 * 
 	 * @param id
 	 */

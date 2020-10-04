@@ -104,8 +104,20 @@ public class AutorControlle {
 	
 	@ApiOperation(value="Deletar Por ID")
 	@DeleteMapping(value = "/{id}")
-	public void deletar(@PathVariable long id) {
-		r.deleteById(id);
+	public ResponseEntity<Response<String>> deletar(@PathVariable("id") Long id) {
+		
+		log.info("Removendo Autor: {}", id);
+		Response<String> response = new Response<String>();
+		Optional<Autor> entity = this.s.buscarPorId(id);
+		
+		if (!entity.isPresent()) {
+			log.info("Erro ao remover Autor devido ID: {} ser inválido.", id);
+			response.getErrors().add("Erro ao remover Autor. Registro não encontrado para o id " + id);
+			return ResponseEntity.badRequest().body(response);
+		}
+		
+		this.s.remover(id);
+		return ResponseEntity.ok(new Response<String>());		
 	}
 	
 	/**
@@ -115,6 +127,7 @@ public class AutorControlle {
 	 * @param objDTO
 	 * @param result
 	 */
+	/**
 	private void validarFuncionario(AutorDTO objDTO, BindingResult result) {
 		if (objDTO.getId() == null) {
 			result.addError(new ObjectError("funcionario", "Funcionário não informado."));
@@ -128,6 +141,7 @@ public class AutorControlle {
 		//}
 		return;
 	}
+	*/
 	
 	private Autor parserToEntity(AutorDTO dto, BindingResult result) throws ParseException {
 		
