@@ -55,8 +55,19 @@ public class AutorControlle {
 	
 	@ApiOperation(value="Listar Por ID")
 	@GetMapping(value = { "/{id}" })
-	public Optional<Autor> encontrarPorId(@PathVariable long id) {
-		return r.findById(id);
+	public ResponseEntity<Response<AutorDTO>> encontrarPorId(@PathVariable("id") long id) {
+		log.info("Buscando Autor por ID: {}", id);
+		Response<AutorDTO> response = new Response<AutorDTO>();
+		Optional<Autor> entity = this.s.buscarPorId(id);
+		
+		if (!entity.isPresent()) {
+			log.info("Autor não encontrado para o ID: {}", id);
+			response.getErrors().add("Autor não encontrado para o id " + id);
+			return ResponseEntity.badRequest().body(response);
+		}
+		
+		response.setData(this.parserToDTO(entity.get()));
+		return ResponseEntity.ok(response);
 	}
 	
 	@ApiOperation(value="Criar novo")
