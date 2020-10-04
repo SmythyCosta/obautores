@@ -29,11 +29,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.AutorDTO;
+import com.example.demo.enums.PaisEnum;
 import com.example.demo.enums.SexoEnum;
 import com.example.demo.models.Autor;
 import com.example.demo.repository.AutorRepository;
 import com.example.demo.response.Response;
 import com.example.demo.service.imp.AutorService;
+import com.example.demo.util.CpfUtil;
+import com.example.demo.util.DataUtil;
 import com.example.demo.util.EmailUtil;
 
 import io.swagger.annotations.Api;
@@ -149,7 +152,7 @@ public class AutorControlle {
 		Optional<Autor> entity = this.s.buscarPorId(id);
 		
 		if (!entity.isPresent()) {
-			log.info("Erro ao remover Autor devido ID: {} ser inválido.", id);
+			log.info("Erro ao remover Autor devido ID: {} ser inválido. ", id);
 			response.getErrors().add("Erro ao remover Autor. Registro não encontrado para o id " + id);
 			return ResponseEntity.badRequest().body(response);
 		}
@@ -163,10 +166,24 @@ public class AutorControlle {
 		
 		if (!"".equals(objDTO.getEmail().trim())) {
 			if (EmailUtil.isValidEmail(objDTO.getEmail())) {
-				result.addError(new ObjectError("Email", "Email inválido."));
-				return;
+				result.addError(new ObjectError("Email", "Email inválido. "));
 			}
 		}
+		
+		if (objDTO.getPaisOrigem().equalsIgnoreCase(PaisEnum.BRASIL.toString())) {
+			if (!CpfUtil.valida(objDTO.getCpf())){
+				result.addError(new ObjectError("CPF", "Cpf inválido. "));
+			}
+		}
+		
+		objDTO.setCpf(objDTO.getCpf().replaceAll("[.-]", ""));
+		
+		this.s.buscarPorEmail(objDTO.getEmail())
+			.ifPresent(e -> result.addError(new ObjectError("Email", "Email já existente. ")));
+		
+		this.s.buscarPorCpf(objDTO.getCpf())
+			.ifPresent(f -> result.addError(new ObjectError("CPF", "CPF já existente. ")));
+		
 		return;
 	}
 		
@@ -187,7 +204,7 @@ public class AutorControlle {
 		if (EnumUtils.isValidEnum(SexoEnum.class, dto.getSexo())) {
 			entity.setSexo(SexoEnum.valueOf(dto.getSexo()));
 		} else {
-			result.addError(new ObjectError("sexo", "Tipo de sexo inválido."));
+			result.addError(new ObjectError("sexo", "Tipo de sexo inválido. "));
 		}
 				
 		return entity;

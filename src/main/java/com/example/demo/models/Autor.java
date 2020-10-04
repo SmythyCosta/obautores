@@ -45,7 +45,7 @@ public class Autor implements Serializable{
 	@Column(name = "paisOrigem", nullable = false)
 	private String paisOrigem;
 	
-	@Column(name = "cpf", nullable = false)
+	@Column(name = "cpf", unique=true)
 	private String cpf;
 	
 	@ManyToMany(fetch = FetchType.LAZY,

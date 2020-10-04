@@ -3,6 +3,8 @@ package com.example.demo.dto;
 import java.util.Date;
 import java.util.Optional;
 
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotBlank;
 
 import org.hibernate.validator.constraints.Length;
@@ -10,8 +12,6 @@ import org.hibernate.validator.constraints.Length;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-
-//https://projectlombok.org/features/ToString
 
 
 @Getter
@@ -21,16 +21,21 @@ public class AutorDTO {
 	
 	private Optional<Long> id = Optional.empty();
 	
-	@NotBlank(message = "Nome não pode ser vazio.")
-	@Length(min = 3, max = 200, message = "Nome deve conter entre 3 e 200 caracteres.")
+	@NotBlank(message = "Nome deve ser informado. ")
+	@Length(min = 3, max = 200, message = "Nome deve conter entre 3 e 200 caracteres. ")
 	private String nome;
 	
-	@NotBlank(message = "sexo não pode ser vazio.")
+	@NotBlank(message = "sexo não pode ser vazio. ")
 	private String sexo;	
 	
 	private String email;
+	
+	@Temporal(TemporalType.DATE)
 	private Date dataNascimento;
+	
+	@NotBlank(message = "O Pais de Origem deve ser informado. ")
 	private String paisOrigem;
+	
 	private String cpf;
 
 }

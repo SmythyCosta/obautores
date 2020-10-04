@@ -46,5 +46,15 @@ public class AutorService implements BaseService<Autor> {
 		log.info("Buscando um Autor pelo ID {}", id);
 		return this.rep.findById(id);
 	}
+	
+	public Optional<Autor> buscarPorCpf(String cpf) {
+		log.info("Buscando Autor pelo CPF {}", cpf);
+		return Optional.ofNullable(this.rep.findByCpf(cpf));
+	}
+	
+	public Optional<Autor> buscarPorEmail(String email) {
+		log.info("Buscando Autor pelo email {}", email);
+		return Optional.ofNullable(this.rep.findByEmail(email));
+	}
 
 }

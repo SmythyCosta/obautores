@@ -7,6 +7,7 @@ import com.example.demo.models.Autor;
 
 
 public interface AutorRepository extends JpaRepository<Autor, Long>{
-
-
+	
+	Autor findByCpf(String cpf);
+	Autor findByEmail(String email);
 }
