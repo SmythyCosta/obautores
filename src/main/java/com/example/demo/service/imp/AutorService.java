@@ -24,8 +24,9 @@ public class AutorService implements BaseService<Autor> {
 
 	@Override
 	public Page<Autor> listarTodos(PageRequest pageRequest) {
-		// TODO Auto-generated method stub
-		return null;
+		log.info("Buscando Autores PageRequest{}", pageRequest);
+		//return this.rep.findAllEntity(pageRequest);
+		return this.rep.findAll(pageRequest);
 	}
 
 	@Override

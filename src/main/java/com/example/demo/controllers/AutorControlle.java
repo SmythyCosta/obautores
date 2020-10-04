@@ -10,6 +10,10 @@ import org.apache.commons.lang3.EnumUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -21,7 +25,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import com.example.demo.dto.AutorDTO;
 import com.example.demo.enums.SexoEnum;
@@ -47,11 +57,39 @@ public class AutorControlle {
 	@Autowired
 	private AutorService s;
 	
-	@ApiOperation(value="Listar todos")
-	@GetMapping()
-	public List<Autor> listarTodos() {
+	@Value("${paginacao.qtd_por_pagina}")
+	private int qtdPorPagina;
+	
+	@ApiOperation(value="Listar todos listarTodosAll Brutao")
+	@GetMapping(value = "/todosbrutao")
+	public List<Autor> listarTodosAllBrutao() {
 		return r.findAll();
 	}
+	
+	@GetMapping(value = "/listar paginada")
+	public ResponseEntity<Response<Page<AutorDTO>>> listarTodos(
+			@RequestParam(value = "pag", defaultValue = "0") int pag,
+			@RequestParam(value = "ord", defaultValue = "id") String ord,
+			@RequestParam(value = "dir", defaultValue = "DESC") String dir) {
+		
+		log.info("Listagem de Autores, página: {}", pag);
+		Response<Page<AutorDTO>> response = new Response<Page<AutorDTO>>();
+
+		PageRequest pageRequest = PageRequest.of(pag, this.qtdPorPagina, Sort.Direction.ASC, ord);
+		
+		Page<Autor> autores = this.s.listarTodos(pageRequest);
+		Page<AutorDTO> dto = autores.map(a -> this.parserToDTO(a));
+
+		response.setData(dto);
+		return ResponseEntity.ok(response);
+	}
+	
+
+	
+	
+	
+	
+	
 	
 	@ApiOperation(value="Listar Por ID")
 	@GetMapping(value = { "/{id}" })
