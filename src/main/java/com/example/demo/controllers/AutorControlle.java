@@ -61,13 +61,13 @@ public class AutorControlle {
 	private int qtdPorPagina;
 	
 	@ApiOperation(value="Listar todos listarTodosAll Brutao")
-	@GetMapping(value = "/todosbrutao")
-	public List<Autor> listarTodosAllBrutao() {
+	@GetMapping(value = "/listarTodos")
+	public List<Autor> listarTodos() {
 		return r.findAll();
 	}
 	
-	@GetMapping(value = "/listar paginada")
-	public ResponseEntity<Response<Page<AutorDTO>>> listarTodos(
+	@GetMapping(value = "/listarPorPaginacao")
+	public ResponseEntity<Response<Page<AutorDTO>>> listarPorPaginacao(
 			@RequestParam(value = "pag", defaultValue = "0") int pag,
 			@RequestParam(value = "ord", defaultValue = "id") String ord,
 			@RequestParam(value = "dir", defaultValue = "DESC") String dir) {
@@ -83,13 +83,6 @@ public class AutorControlle {
 		response.setData(dto);
 		return ResponseEntity.ok(response);
 	}
-	
-
-	
-	
-	
-	
-	
 	
 	@ApiOperation(value="Listar Por ID")
 	@GetMapping(value = { "/{id}" })

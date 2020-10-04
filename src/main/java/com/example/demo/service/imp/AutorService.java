@@ -25,7 +25,6 @@ public class AutorService implements BaseService<Autor> {
 	@Override
 	public Page<Autor> listarTodos(PageRequest pageRequest) {
 		log.info("Buscando Autores PageRequest{}", pageRequest);
-		//return this.rep.findAllEntity(pageRequest);
 		return this.rep.findAll(pageRequest);
 	}
 
