@@ -51,16 +51,6 @@ public class ObraControlle {
 		return r.save(obj);
 	}
 	
-	@ApiOperation(value="Alterar Por ID")
-	@PutMapping(value = "/{id}")
-	public Obra atualiza(@PathVariable long id, @RequestBody @Valid Obra obj) {
-		return r.save(obj);
-	}
-	
-	@ApiOperation(value="Deletar Por ID")
-	@DeleteMapping(value = "/{id}")
-	public void deletar(@PathVariable long id) {
-		r.deleteById(id);
-	}
+
 	
 }
