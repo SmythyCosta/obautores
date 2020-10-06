@@ -1,5 +1,6 @@
 package com.example.demo.service.imp;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -57,4 +58,8 @@ public class AutorService implements BaseService<Autor> {
 		return Optional.ofNullable(this.rep.findByEmail(email));
 	}
 
+	public List<Autor> buscarAutoresPorObra(Long idObra){
+		log.info("Buscando Autores pelo ID Obra {}", idObra);
+		return this.rep.findAutoresByIdObra (idObra);
+	}
 }

@@ -3,6 +3,7 @@ package com.example.demo.models;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -16,6 +17,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "obra")
@@ -48,7 +50,9 @@ public class Obra implements Serializable {
                 CascadeType.MERGE
             },
             mappedBy = "obra")
-    private Set<Autor> autor = new HashSet<>();
+    
+	private List<Autor> autor;
+	
 	
 	public Obra() {
 		// TODO Auto-generated constructor stub
@@ -56,6 +60,16 @@ public class Obra implements Serializable {
 
 	public Obra(String nome, String descricao, String imagem, Date dataPublicacao, Date dataExposicao) {
 		super();
+		this.nome = nome;
+		this.descricao = descricao;
+		this.imagem = imagem;
+		this.dataPublicacao = dataPublicacao;
+		this.dataExposicao = dataExposicao;
+	}
+
+	public Obra(Long id, String nome, String descricao, String imagem, Date dataPublicacao, Date dataExposicao) {
+		super();
+		this.id = id;
 		this.nome = nome;
 		this.descricao = descricao;
 		this.imagem = imagem;
@@ -112,11 +126,11 @@ public class Obra implements Serializable {
 	}
 
 	@JsonIgnore
-	public Set<Autor> getAutor() {
+	public List<Autor> getAutor() {
 		return autor;
 	}
 
-	public void setAutor(Set<Autor> autor) {
+	public void setAutor(List<Autor> autor) {
 		this.autor = autor;
 	}
 

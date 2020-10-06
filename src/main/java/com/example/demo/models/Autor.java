@@ -3,6 +3,7 @@ package com.example.demo.models;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -19,6 +20,7 @@ import javax.persistence.Table;
 
 import com.example.demo.enums.SexoEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "autor")
@@ -56,14 +58,26 @@ public class Autor implements Serializable{
 	@JoinTable(name = "autor_obra",
             joinColumns = { @JoinColumn(name = "autor_id") },
             inverseJoinColumns = { @JoinColumn(name = "obra_id") })
-    private Set<Obra> obra = new HashSet<>();
+    private List<Obra> obra;
+	
 	
 	public Autor() {
 		// TODO Auto-generated constructor stub
 	}
-
+	
 	public Autor(String nome, SexoEnum sexo, String email, Date dataNascimento, String paisOrigem, String cpf) {
 		super();
+		this.nome = nome;
+		this.sexo = sexo;
+		this.email = email;
+		this.dataNascimento = dataNascimento;
+		this.paisOrigem = paisOrigem;
+		this.cpf = cpf;
+	}	
+
+	public Autor(Long id, String nome, SexoEnum sexo, String email, Date dataNascimento, String paisOrigem, String cpf) {
+		super();
+		this.id = id;
 		this.nome = nome;
 		this.sexo = sexo;
 		this.email = email;
@@ -129,11 +143,11 @@ public class Autor implements Serializable{
 	}
 	
 	@JsonIgnore
-	public Set<Obra> getObra() {
+	public List<Obra> getObra() {
 		return obra;
 	}
 
-	public void setObra(Set<Obra> obra) {
+	public void setObra(List<Obra> obra) {
 		this.obra = obra;
 	}
 
