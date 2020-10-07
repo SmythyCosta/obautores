@@ -1,13 +1,17 @@
 package com.example.demo.dto;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotBlank;
 
 import org.hibernate.validator.constraints.Length;
+
+import com.example.demo.models.Obra;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -37,5 +41,7 @@ public class AutorDTO {
 	private String paisOrigem;
 	
 	private String cpf;
+	
+	private Set<Obra> obra = new HashSet<>();
 
 }

@@ -2,17 +2,9 @@ package com.example.demo.dto;
 
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotBlank;
@@ -50,7 +42,7 @@ public class ObraDTO {
 	@Temporal(TemporalType.DATE)
 	private Date dataExposicao;
 	
-	private List<Autor> autor;
+	private Set<Autor> autor = new HashSet<>();
 	
 
 }

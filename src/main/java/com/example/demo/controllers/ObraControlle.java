@@ -162,7 +162,8 @@ public class ObraControlle {
 		dto.setImagem(entity.getImagem());
 		dto.setDataPublicacao(entity.getDataPublicacao());
 		dto.setDataExposicao(entity.getDataExposicao());
-		dto.setAutor(this.getAutores(entity.getId()));
+		//dto.setAutor(this.getAutores(entity.getId()));
+		dto.setAutor(dto.getAutor());
 
 		return dto;
 	}

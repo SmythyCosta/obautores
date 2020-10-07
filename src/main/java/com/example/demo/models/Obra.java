@@ -51,7 +51,7 @@ public class Obra implements Serializable {
             },
             mappedBy = "obra")
     
-	private List<Autor> autor;
+	private Set<Autor> autor = new HashSet<>();;
 	
 	
 	public Obra() {
@@ -126,11 +126,11 @@ public class Obra implements Serializable {
 	}
 
 	@JsonIgnore
-	public List<Autor> getAutor() {
+	public Set<Autor> getAutor() {
 		return autor;
 	}
 
-	public void setAutor(List<Autor> autor) {
+	public void setAutor(Set<Autor> autor) {
 		this.autor = autor;
 	}
 

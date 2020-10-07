@@ -58,7 +58,7 @@ public class Autor implements Serializable{
 	@JoinTable(name = "autor_obra",
             joinColumns = { @JoinColumn(name = "autor_id") },
             inverseJoinColumns = { @JoinColumn(name = "obra_id") })
-    private List<Obra> obra;
+    private Set<Obra> obra = new HashSet<>();
 	
 	
 	public Autor() {
@@ -143,11 +143,11 @@ public class Autor implements Serializable{
 	}
 	
 	@JsonIgnore
-	public List<Obra> getObra() {
+	public Set<Obra> getObra() {
 		return obra;
 	}
 
-	public void setObra(List<Obra> obra) {
+	public void setObra(Set<Obra> obra) {
 		this.obra = obra;
 	}
 

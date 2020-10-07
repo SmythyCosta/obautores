@@ -200,6 +200,7 @@ public class AutorControlle {
 		entity.setDataNascimento(dto.getDataNascimento());
 		entity.setPaisOrigem(dto.getPaisOrigem());
 		entity.setCpf(dto.getCpf());
+		entity.setObra(dto.getObra());
 		
 		if (EnumUtils.isValidEnum(SexoEnum.class, dto.getSexo())) {
 			entity.setSexo(SexoEnum.valueOf(dto.getSexo()));
@@ -219,6 +220,7 @@ public class AutorControlle {
 		dto.setDataNascimento(entity.getDataNascimento());
 		dto.setPaisOrigem(entity.getPaisOrigem());
 		dto.setCpf(entity.getCpf());
+		dto.setObra(entity.getObra());
 		
 		return dto;
 	}
