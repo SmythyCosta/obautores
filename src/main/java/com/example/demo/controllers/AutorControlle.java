@@ -36,7 +36,6 @@ import com.example.demo.repository.AutorRepository;
 import com.example.demo.response.Response;
 import com.example.demo.service.imp.AutorService;
 import com.example.demo.util.CpfUtil;
-import com.example.demo.util.DataUtil;
 import com.example.demo.util.EmailUtil;
 
 import io.swagger.annotations.Api;
@@ -49,24 +48,16 @@ import io.swagger.annotations.ApiOperation;
 public class AutorControlle {
 	
 	private static final Logger log = LoggerFactory.getLogger(AutorControlle.class);
-
-	@Autowired
-	private AutorRepository r;
 	
 	@Autowired
-	private AutorService s;
+	private AutorService autorService;
 	
 	@Value("${paginacao.qtd_por_pagina}")
 	private int qtdPorPagina;
-	
-	@ApiOperation(value="Listar todos listarTodosAll Brutao")
-	@GetMapping(value = "/listarTodos")
-	public List<Autor> listarTodos() {
-		return r.findAll();
-	}
-	
-	@GetMapping(value = "/listarPorPaginacao")
-	public ResponseEntity<Response<Page<AutorDTO>>> listarPorPaginacao(
+		
+	@ApiOperation(value="listar Atores com Paginação")
+	@GetMapping(value = "/listarAtores")
+	public ResponseEntity<Response<Page<AutorDTO>>> listarAtores(
 			@RequestParam(value = "pag", defaultValue = "0") int pag,
 			@RequestParam(value = "ord", defaultValue = "id") String ord,
 			@RequestParam(value = "dir", defaultValue = "DESC") String dir) {
@@ -76,19 +67,19 @@ public class AutorControlle {
 
 		PageRequest pageRequest = PageRequest.of(pag, this.qtdPorPagina, Sort.Direction.ASC, ord);
 		
-		Page<Autor> autores = this.s.listarTodos(pageRequest);
+		Page<Autor> autores = this.autorService.listarTodos(pageRequest);
 		Page<AutorDTO> dto = autores.map(a -> this.parserToDTO(a));
 
 		response.setData(dto);
 		return ResponseEntity.ok(response);
 	}
 	
-	@ApiOperation(value="Listar Por ID")
+	@ApiOperation(value="buscar Autor por ID")
 	@GetMapping(value = { "/{id}" })
-	public ResponseEntity<Response<AutorDTO>> encontrarPorId(@PathVariable("id") long id) {
+	public ResponseEntity<Response<AutorDTO>> buscarPorId(@PathVariable("id") long id) {
 		log.info("Buscando Autor por ID: {}", id);
 		Response<AutorDTO> response = new Response<AutorDTO>();
-		Optional<Autor> entity = this.s.buscarPorId(id);
+		Optional<Autor> entity = this.autorService.buscarPorId(id);
 		
 		if (!entity.isPresent()) {
 			log.info("Autor não encontrado para o ID: {}", id);
@@ -100,9 +91,9 @@ public class AutorControlle {
 		return ResponseEntity.ok(response);
 	}
 	
-	@ApiOperation(value="Criar novo")
+	@ApiOperation(value="Criar novo Autor")
 	@PostMapping()
-	public ResponseEntity<Response<AutorDTO>> criarNovo(@Valid @RequestBody AutorDTO objDTO, BindingResult result) throws ParseException  {
+	public ResponseEntity<Response<AutorDTO>> criarNovoAutor(@Valid @RequestBody AutorDTO objDTO, BindingResult result) throws ParseException  {
 		
 		log.info("criando novo autor: {}", objDTO.toString());
 		Response<AutorDTO> response = new Response<AutorDTO>();
@@ -115,21 +106,22 @@ public class AutorControlle {
 			return ResponseEntity.badRequest().body(response);
 		}
 		
-		Autor out = this.s.persistir(autor);
+		Autor out = this.autorService.persistir(autor);
 		response.setData(this.parserToDTO(out));
 		
 		return ResponseEntity.ok(response);
 	}
 	
-	@ApiOperation(value="Alterar Por ID")
+	@ApiOperation(value="Alterar Autor por ID")
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<Response<AutorDTO>> atualiza(@PathVariable long id, @Valid @RequestBody AutorDTO dto, BindingResult result) throws ParseException {
+	public ResponseEntity<Response<AutorDTO>> atualizaAutor(@PathVariable long id, @Valid @RequestBody AutorDTO dto, BindingResult result) throws ParseException {
 		
 		log.info("Atualizando lançamento: {}", dto.toString());
 		Response<AutorDTO> response = new Response<AutorDTO>();
-		//validarFuncionario(lancamentoDto, result);
 		
 		dto.setId(Optional.of(id));
+		ValidaAutor(dto, result);		
+		
 		Autor entity = this.parserToEntity(dto, result);
 		
 		if (result.hasErrors()) {
@@ -138,7 +130,7 @@ public class AutorControlle {
 			return ResponseEntity.badRequest().body(response);
 		}
 		
-		entity = this.s.persistir(entity);
+		entity = this.autorService.persistir(entity);
 		response.setData(this.parserToDTO(entity));
 		return ResponseEntity.ok(response);
 	}
@@ -149,7 +141,7 @@ public class AutorControlle {
 		
 		log.info("Removendo Autor: {}", id);
 		Response<String> response = new Response<String>();
-		Optional<Autor> entity = this.s.buscarPorId(id);
+		Optional<Autor> entity = this.autorService.buscarPorId(id);
 		
 		if (!entity.isPresent()) {
 			log.info("Erro ao remover Autor devido ID: {} ser inválido. ", id);
@@ -157,12 +149,15 @@ public class AutorControlle {
 			return ResponseEntity.badRequest().body(response);
 		}
 		
-		this.s.remover(id);
+		this.autorService.remover(id);
 		return ResponseEntity.ok(new Response<String>());		
 	}
 	
 
 	private void ValidaAutor(AutorDTO objDTO, BindingResult result) {
+		
+		boolean checkEmail = true;
+		boolean checkCPF = true;
 		
 		if (!"".equals(objDTO.getEmail().trim())) {
 			if (EmailUtil.isValidEmail(objDTO.getEmail())) {
@@ -177,13 +172,33 @@ public class AutorControlle {
 		}
 		
 		objDTO.setCpf(objDTO.getCpf().replaceAll("[.-]", ""));
-		
-		this.s.buscarPorEmail(objDTO.getEmail())
-			.ifPresent(e -> result.addError(new ObjectError("Email", "Email já existente. ")));
-		
-		this.s.buscarPorCpf(objDTO.getCpf())
+				
+		// ================================
+		// Validando Email e Cpf na edição 
+		// ================================
+		if (objDTO.getId().isPresent()) {
+				
+			Optional<Autor> entity = this.autorService.buscarPorId(objDTO.getId().get());	
+			if (entity.isPresent()) {
+				if (entity.get().getEmail().equalsIgnoreCase(objDTO.getEmail())) {
+					checkEmail = false;
+				}				
+				if (entity.get().getCpf().equalsIgnoreCase(objDTO.getCpf())) {
+					checkCPF = false;
+				}
+			}
+		}
+				
+		if (checkEmail) {
+			this.autorService.buscarPorEmail(objDTO.getEmail())
+			.ifPresent(e -> result.addError(new ObjectError("Email", "Email já existente. ")));		
+		}
+			
+		if (checkCPF) {
+			this.autorService.buscarPorCpf(objDTO.getCpf())
 			.ifPresent(f -> result.addError(new ObjectError("CPF", "CPF já existente. ")));
-		
+		}
+				
 		return;
 	}
 		
@@ -200,7 +215,7 @@ public class AutorControlle {
 		entity.setDataNascimento(dto.getDataNascimento());
 		entity.setPaisOrigem(dto.getPaisOrigem());
 		entity.setCpf(dto.getCpf());
-		entity.setObra(dto.getObra());
+		entity.getObra().addAll(dto.getObra());
 		
 		if (EnumUtils.isValidEnum(SexoEnum.class, dto.getSexo())) {
 			entity.setSexo(SexoEnum.valueOf(dto.getSexo()));
@@ -220,7 +235,7 @@ public class AutorControlle {
 		dto.setDataNascimento(entity.getDataNascimento());
 		dto.setPaisOrigem(entity.getPaisOrigem());
 		dto.setCpf(entity.getCpf());
-		dto.setObra(entity.getObra());
+		dto.getObra().addAll(entity.getObra());
 		
 		return dto;
 	}

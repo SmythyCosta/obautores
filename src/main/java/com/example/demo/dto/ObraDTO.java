@@ -1,9 +1,9 @@
 package com.example.demo.dto;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -42,7 +42,7 @@ public class ObraDTO {
 	@Temporal(TemporalType.DATE)
 	private Date dataExposicao;
 	
-	private Set<Autor> autor = new HashSet<>();
+	private List<Autor> autor = new ArrayList<Autor>();
 	
 
 }

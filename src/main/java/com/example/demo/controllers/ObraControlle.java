@@ -120,9 +120,9 @@ public class ObraControlle {
 	}
 	
 	
-	@ApiOperation(value="Criar novo")
+	@ApiOperation(value="Criar nova Obra")
 	@PostMapping()
-	public ResponseEntity<Response<ObraDTO>> criarNovo(@Valid @RequestBody ObraDTO dto) {
+	public ResponseEntity<Response<ObraDTO>> criarNovaObra(@Valid @RequestBody ObraDTO dto) {
 		
 		log.info("criando nova abra: {}", dto.toString());
 		Response<ObraDTO> response = new Response<ObraDTO>();
@@ -140,7 +140,8 @@ public class ObraControlle {
 	
 	private Obra parserToEntity(ObraDTO dto) {
 		
-		Obra entity = new Obra();		
+		Obra entity = new Obra();
+		
 		if (dto.getId().isPresent()) {		
 			entity.setId(dto.getId().get());
 		}
@@ -149,7 +150,7 @@ public class ObraControlle {
 		entity.setImagem(dto.getImagem());
 		entity.setDataPublicacao(dto.getDataPublicacao());
 		entity.setDataExposicao(dto.getDataExposicao());;
-		entity.setAutor(dto.getAutor());
+		entity.getAutor().addAll(dto.getAutor());
 				
 		return entity;
 	}
@@ -163,7 +164,7 @@ public class ObraControlle {
 		dto.setDataPublicacao(entity.getDataPublicacao());
 		dto.setDataExposicao(entity.getDataExposicao());
 		//dto.setAutor(this.getAutores(entity.getId()));
-		dto.setAutor(dto.getAutor());
+		//dto.setAutor(dto.getAutor());
 
 		return dto;
 	}

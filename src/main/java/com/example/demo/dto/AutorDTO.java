@@ -1,9 +1,9 @@
 package com.example.demo.dto;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -42,6 +42,6 @@ public class AutorDTO {
 	
 	private String cpf;
 	
-	private Set<Obra> obra = new HashSet<>();
+	private List<Obra> obra = new ArrayList<Obra>();
 
 }

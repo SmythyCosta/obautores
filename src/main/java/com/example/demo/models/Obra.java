@@ -1,10 +1,9 @@
 package com.example.demo.models;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -17,7 +16,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "obra")
@@ -50,8 +48,7 @@ public class Obra implements Serializable {
                 CascadeType.MERGE
             },
             mappedBy = "obra")
-    
-	private Set<Autor> autor = new HashSet<>();;
+	private List<Autor> autor = new ArrayList<>();;
 	
 	
 	public Obra() {
@@ -126,11 +123,11 @@ public class Obra implements Serializable {
 	}
 
 	@JsonIgnore
-	public Set<Autor> getAutor() {
+	public List<Autor> getAutor() {
 		return autor;
 	}
 
-	public void setAutor(Set<Autor> autor) {
+	public void setAutor(List<Autor> autor) {
 		this.autor = autor;
 	}
 

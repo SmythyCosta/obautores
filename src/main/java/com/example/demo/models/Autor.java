@@ -1,10 +1,9 @@
 package com.example.demo.models;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -20,7 +19,6 @@ import javax.persistence.Table;
 
 import com.example.demo.enums.SexoEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "autor")
@@ -58,7 +56,7 @@ public class Autor implements Serializable{
 	@JoinTable(name = "autor_obra",
             joinColumns = { @JoinColumn(name = "autor_id") },
             inverseJoinColumns = { @JoinColumn(name = "obra_id") })
-    private Set<Obra> obra = new HashSet<>();
+    private List<Obra> obra = new ArrayList<Obra>();
 	
 	
 	public Autor() {
@@ -143,14 +141,14 @@ public class Autor implements Serializable{
 	}
 	
 	@JsonIgnore
-	public Set<Obra> getObra() {
+	public List<Obra> getObra() {
 		return obra;
 	}
 
-	public void setObra(Set<Obra> obra) {
+	public void setObra(List<Obra> obra) {
 		this.obra = obra;
 	}
-
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
