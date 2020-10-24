@@ -12,6 +12,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
@@ -42,13 +44,11 @@ public class Obra implements Serializable {
 	@Column(name = "data_exposicao", nullable = false)
 	private Date dataExposicao;
 	
-	@ManyToMany(fetch = FetchType.LAZY,
-            cascade = {
-                CascadeType.PERSIST,
-                CascadeType.MERGE
-            },
-            mappedBy = "obra")
-	private List<Autor> autor = new ArrayList<>();;
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+	@JoinTable(name = "autor_obra",
+	    joinColumns = { @JoinColumn(name = "obra_id") },
+	    inverseJoinColumns = { @JoinColumn(name = "autor_id") })
+	private List<Autor> autor = new ArrayList<Autor>();
 	
 	
 	public Obra() {
