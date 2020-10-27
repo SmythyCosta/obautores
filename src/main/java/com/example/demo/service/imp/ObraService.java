@@ -1,6 +1,9 @@
 package com.example.demo.service.imp;
 
+import java.util.List;
 import java.util.Optional;
+
+import org.springframework.data.domain.PageRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.models.Obra;
+import com.example.demo.repository.ObraCustomRepository;
 import com.example.demo.repository.ObraRepository;
 import com.example.demo.service.BaseService;
 
@@ -20,11 +24,19 @@ public class ObraService implements BaseService<Obra> {
 	
 	@Autowired
 	private ObraRepository rep;
+	
+	@Autowired
+	private ObraCustomRepository obraCustomRepository;
 
 	@Override
 	public Page<Obra> listarTodos(PageRequest pageRequest) {
 		log.info("Buscando Obras PageRequest{}", pageRequest);
 		return this.rep.findAll(pageRequest);
+	}
+	
+	public Page<Obra> filtar(PageRequest pageRequest, String nome, String descricao) {
+		log.info("Buscando Obras Com Filtro Customizado{}");
+		return this.obraCustomRepository.find(pageRequest, nome, descricao);
 	}
 
 	@Override
@@ -37,6 +49,12 @@ public class ObraService implements BaseService<Obra> {
 	public Optional<Obra> buscarPorId(Long id) {
 		log.info("Buscando uma Obra pelo ID {}", id);
 		return this.rep.findById(id);
+	}
+	
+	@Override
+	public Optional<Obra> buscarPorNome(String nome) {
+		log.info("Buscando uma Obra pelo nome {}", nome);
+		return this.rep.findByNome(nome);
 	}
 
 	@Override

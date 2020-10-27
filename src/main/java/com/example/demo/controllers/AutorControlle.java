@@ -1,7 +1,6 @@
 package com.example.demo.controllers;
 
 import java.text.ParseException;
-import java.util.List;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -32,7 +31,6 @@ import com.example.demo.dto.AutorDTO;
 import com.example.demo.enums.PaisEnum;
 import com.example.demo.enums.SexoEnum;
 import com.example.demo.models.Autor;
-import com.example.demo.repository.AutorRepository;
 import com.example.demo.response.Response;
 import com.example.demo.service.imp.AutorService;
 import com.example.demo.util.CpfUtil;
@@ -158,6 +156,7 @@ public class AutorControlle {
 		
 		boolean checkEmail = true;
 		boolean checkCPF = true;
+		boolean checkNome = true;
 		
 		if (!"".equals(objDTO.getEmail().trim())) {
 			if (EmailUtil.isValidEmail(objDTO.getEmail())) {
@@ -186,17 +185,28 @@ public class AutorControlle {
 				if (entity.get().getCpf().equalsIgnoreCase(objDTO.getCpf())) {
 					checkCPF = false;
 				}
+				if (entity.get().getNome().equalsIgnoreCase(objDTO.getNome())) {
+					checkNome = false;
+				}
 			}
 		}
 				
 		if (checkEmail) {
-			this.autorService.buscarPorEmail(objDTO.getEmail())
-			.ifPresent(e -> result.addError(new ObjectError("Email", "Email já existente. ")));		
+			this.autorService.buscarPorEmail(objDTO.getEmail()).ifPresent(
+					e -> result.addError(new ObjectError("Email", "Email já existente. "))
+			);		
 		}
 			
 		if (checkCPF) {
-			this.autorService.buscarPorCpf(objDTO.getCpf())
-			.ifPresent(f -> result.addError(new ObjectError("CPF", "CPF já existente. ")));
+			this.autorService.buscarPorCpf(objDTO.getCpf()).ifPresent(
+					f -> result.addError(new ObjectError("CPF", "CPF já existente. "))
+			);
+		}
+		
+		if (checkNome) {
+			this.autorService.buscarPorNome(objDTO.getNome()).ifPresent(
+					g -> result.addError(new ObjectError("Nome", "Nome já existente. "))
+			);
 		}
 				
 		return;
@@ -215,7 +225,6 @@ public class AutorControlle {
 		entity.setDataNascimento(dto.getDataNascimento());
 		entity.setPaisOrigem(dto.getPaisOrigem());
 		entity.setCpf(dto.getCpf());
-		entity.getObra().addAll(dto.getObra());
 		
 		if (EnumUtils.isValidEnum(SexoEnum.class, dto.getSexo())) {
 			entity.setSexo(SexoEnum.valueOf(dto.getSexo()));
@@ -235,7 +244,6 @@ public class AutorControlle {
 		dto.setDataNascimento(entity.getDataNascimento());
 		dto.setPaisOrigem(entity.getPaisOrigem());
 		dto.setCpf(entity.getCpf());
-		dto.getObra().addAll(entity.getObra());
 		
 		return dto;
 	}

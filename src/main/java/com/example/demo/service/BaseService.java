@@ -28,12 +28,17 @@ public interface BaseService<T> {
 	 * Retorna um Obj por ID.
 	 * 
 	 * @param id
-	 * @return Optional<Lancamento>
+	 * @return Optional<Entity>
 	 */
 	Optional<T> buscarPorId(Long id);
 	
-
-	//Optional<T> buscarPorEmail(String email);
+	/**
+	 * Retorna um Obj por nome.
+	 * 
+	 * @param nome
+	 * @return Optional<Entity>
+	 */
+	Optional<T> buscarPorNome(String nome);
 	
 	/**
 	 * Deleta um Obj base de dados.

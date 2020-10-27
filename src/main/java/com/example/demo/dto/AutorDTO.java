@@ -1,17 +1,11 @@
 package com.example.demo.dto;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotBlank;
 
 import org.hibernate.validator.constraints.Length;
-
-import com.example.demo.models.Obra;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -34,7 +28,7 @@ public class AutorDTO {
 	
 	private String email;
 	
-	@Temporal(TemporalType.DATE)
+	@NotBlank(message = "dataNascimento não pode ser vazio. ")
 	private Date dataNascimento;
 	
 	@NotBlank(message = "O Pais de Origem deve ser informado. ")
@@ -42,6 +36,4 @@ public class AutorDTO {
 	
 	private String cpf;
 	
-	private List<Obra> obra = new ArrayList<Obra>();
-
 }

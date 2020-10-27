@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,8 +38,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 
-
-
 @RestController
 @RequestMapping(value="/api/obra")
 @CrossOrigin(origins = "*")
@@ -53,12 +52,11 @@ public class ObraControlle {
 	@Autowired
 	private AutorService autorService;
 	
-	
 	@Value("${paginacao.qtd_por_pagina}")
 	private int qtdPorPagina;
 	
 	@ApiOperation(value="listar Obras")
-	@GetMapping(value = "/listarPorPaginacao")
+	@GetMapping(value = "/listarObras")
 	public ResponseEntity<Response<Page<ObraResponseDTO>>> listarObras(
 			@RequestParam(value = "pag", defaultValue = "0") int pag,
 			@RequestParam(value = "ord", defaultValue = "id") String ord,
@@ -74,6 +72,27 @@ public class ObraControlle {
 		response.setData(dto);
 		return ResponseEntity.ok(response);
 	}
+	
+	@ApiOperation(value="filtrando Obras")
+	@GetMapping("/filtrarObras")
+    public ResponseEntity<Response<Page<ObraResponseDTO>>> filtraObra(  
+    		@RequestParam(value = "pag", defaultValue = "0") int pag,
+			@RequestParam(value = "ord", defaultValue = "id") String ord,
+			@RequestParam(value = "dir", defaultValue = "DESC") String dir,
+            @RequestParam(value = "nome", required = false) String nome,
+            @RequestParam(value = "descicao", required = false) String descicao
+    ) {
+		
+		log.info("Filtro de Obra => nome: " + nome + " descrição: " + descicao + "");
+		PageRequest pageRequest = PageRequest.of(pag, this.qtdPorPagina, Sort.Direction.ASC, ord);
+		Response<Page<ObraResponseDTO>> response = new Response<Page<ObraResponseDTO>>();		
+		
+		Page<Obra> obras = this.obraService.filtar(pageRequest, nome, descicao);
+		Page<ObraResponseDTO> dto = obras.map(o -> this.parserToDTO(o));
+		
+		response.setData(dto);
+		return ResponseEntity.ok(response);
+    }
 	
 	@ApiOperation(value="Listar Obra Por ID")
 	@GetMapping(value = { "/{id}" })
@@ -95,14 +114,23 @@ public class ObraControlle {
 	
 	@ApiOperation(value="Criar nova Obra")
 	@PostMapping()
-	public ResponseEntity<Response<ObraResponseDTO>> criarNovaObra(@Valid @RequestBody ObraRequestDTO dto) {
+	public ResponseEntity<Response<ObraResponseDTO>> criarNovaObra(@Valid @RequestBody ObraRequestDTO dto, BindingResult result) throws ParseException  {
 		
 		log.info("criando nova abra: {}", dto.toString());
 		Response<ObraResponseDTO> response = new Response<ObraResponseDTO>();
-		response.setData(this.parserToDTO(this.obraService.persistir(this.parserToEntity(dto))));
+		
+		Obra obra = this.parserToEntity(dto);
+		ValidaObra(obra, result);
+		
+		if (result.hasErrors()) {
+			log.error("Erro validando Obra: {}", result.getAllErrors());
+			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
+			return ResponseEntity.badRequest().body(response);
+		}
+		
+		response.setData(this.parserToDTO(this.obraService.persistir(obra)));
 		return ResponseEntity.ok(response);
 	}
-	
 	
 	@ApiOperation(value="Alterar Obra por ID")
 	@PutMapping(value = "/{id}")
@@ -111,10 +139,10 @@ public class ObraControlle {
 		log.info("Atualizando Obra: {}", dto.toString());
 		Response<ObraResponseDTO> response = new Response<ObraResponseDTO>();
 		
-		dto.setId(Optional.of(id));
-		//ValidaObra(dto, result);
-		
+		dto.setId(Optional.of(id));		
 		Obra entity = this.parserToEntity(dto);
+		
+		ValidaObra(entity, result);
 		
 		if (result.hasErrors()) {
 			log.error("Erro validando Obra: {}", result.getAllErrors());
@@ -122,8 +150,7 @@ public class ObraControlle {
 			return ResponseEntity.badRequest().body(response);
 		}
 		
-		entity = this.obraService.persistir(entity);
-		response.setData(this.parserToDTO(entity));
+		response.setData(this.parserToDTO(this.obraService.persistir(entity)));
 		return ResponseEntity.ok(response);
 	}
 
@@ -181,6 +208,38 @@ public class ObraControlle {
 		dto.getAutor().addAll(entity.getAutor());
 
 		return dto;
+	}
+	
+	private void ValidaObra(Obra obra, BindingResult result) {
+		
+		boolean checkName = true;
+		
+		if (obra.getAutor().isEmpty()) {
+			result.addError(new ObjectError("Autor", "Uma Obra deve possuir no mínimo um Autor. "));
+		}				
+		if (obra.getDataPublicacao() == null || obra.getDataExposicao() == null) {
+			result.addError(new ObjectError("Datas", "DataPublicacao ou DataExposicao Devem ser preenchida. "));
+		}
+		
+		// ================================
+		// Validando na edição 
+		// ================================
+		if (obra.getId() != null) {
+			Optional<Obra> entity = this.obraService.buscarPorId(obra.getId());	
+			if (entity.isPresent()) {
+				if (entity.get().getNome().equalsIgnoreCase(obra.getNome())) {
+					checkName = false;
+				}				
+			}
+		}
+		
+		if (checkName) {
+			this.obraService.buscarPorNome(obra.getNome()).ifPresent(
+					e -> result.addError(new ObjectError("Nome", "Nome já existente. "))
+			);		
+		}
+		
+		return;
 	}
 	
 }

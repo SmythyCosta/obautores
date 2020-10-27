@@ -6,10 +6,9 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
 
 import com.example.demo.models.Autor;
 import com.example.demo.repository.AutorRepository;
@@ -46,6 +45,12 @@ public class AutorService implements BaseService<Autor> {
 	public Optional<Autor> buscarPorId(Long id) {
 		log.info("Buscando um Autor pelo ID {}", id);
 		return this.rep.findById(id);
+	}
+	
+	@Override
+	public Optional<Autor> buscarPorNome(String nome) {
+		log.info("Buscando um Autor pelo nome {}", nome);
+		return this.rep.findByNome(nome);
 	}
 	
 	public Optional<Autor> buscarPorCpf(String cpf) {

@@ -29,7 +29,7 @@ public class Obra implements Serializable {
     @GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	
-	@Column(name = "nome", nullable = false)
+	@Column(name = "nome", nullable = false, unique=true)
 	private String nome;
 	
 	@Column(name = "descricao", nullable = false)
@@ -38,18 +38,17 @@ public class Obra implements Serializable {
 	@Column(name = "imagem", nullable = false)
 	private String imagem;
 	
-	@Column(name = "data_publicacao", nullable = false)
+	@Column(name = "data_publicacao", nullable = true)
 	private Date dataPublicacao;
 	
-	@Column(name = "data_exposicao", nullable = false)
+	@Column(name = "data_exposicao", nullable = true)
 	private Date dataExposicao;
 	
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
 	@JoinTable(name = "autor_obra",
 	    joinColumns = { @JoinColumn(name = "obra_id") },
 	    inverseJoinColumns = { @JoinColumn(name = "autor_id") })
-	private List<Autor> autor = new ArrayList<Autor>();
-	
+	private List<Autor> autor = new ArrayList<Autor>();	
 	
 	public Obra() {
 		// TODO Auto-generated constructor stub
