@@ -1,12 +1,9 @@
 package com.example.demo.dto;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotBlank;
 
 import org.hibernate.validator.constraints.Length;
@@ -34,38 +31,10 @@ public class ObraRequestDTO {
 	@NotBlank(message = "Imagem deve ser informado. ")
 	private String imagem;
 		
-	@Temporal(TemporalType.DATE)
-	private Date dataPublicacao;
+	private String dataPublicacao;
 	
-	@Temporal(TemporalType.DATE)
-	private Date dataExposicao;
+	private String dataExposicao;
 	
 	private List<Long> autorId = new ArrayList<>();
-	
-	
-	public ObraRequestDTO() {
-		// TODO Auto-generated constructor stub
-	}
-
-	public ObraRequestDTO(Optional<Long> id, String nome, String descricao, String imagem, Date dataPublicacao, Date dataExposicao, List<Long> autorId) {
-		super();
-		this.id = id;
-		this.nome = nome;
-		this.descricao = descricao;
-		this.imagem = imagem;
-		this.dataPublicacao = dataPublicacao;
-		this.dataExposicao = dataExposicao;
-		this.autorId = autorId;
-	}
-	
-	public ObraRequestDTO(String nome, String descricao, String imagem, Date dataPublicacao, Date dataExposicao, List<Long> autorId) {
-		super();
-		this.nome = nome;
-		this.descricao = descricao;
-		this.imagem = imagem;
-		this.dataPublicacao = dataPublicacao;
-		this.dataExposicao = dataExposicao;
-		this.autorId = autorId;
-	}
 	
 }

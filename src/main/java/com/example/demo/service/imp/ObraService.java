@@ -1,9 +1,6 @@
 package com.example.demo.service.imp;
 
-import java.util.List;
 import java.util.Optional;
-
-import org.springframework.data.domain.PageRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,11 +30,6 @@ public class ObraService implements BaseService<Obra> {
 		log.info("Buscando Obras PageRequest{}", pageRequest);
 		return this.rep.findAll(pageRequest);
 	}
-	
-	public Page<Obra> filtar(PageRequest pageRequest, String nome, String descricao) {
-		log.info("Buscando Obras Com Filtro Customizado{}");
-		return this.obraCustomRepository.find(pageRequest, nome, descricao);
-	}
 
 	@Override
 	public Obra persistir(Obra t) {
@@ -61,6 +53,11 @@ public class ObraService implements BaseService<Obra> {
 	public void remover(Long id) {
 		log.info("Removendo a Obra ID {}", id);
 		this.rep.deleteById(id);		
+	}
+	
+	public Page<Obra> filtar(PageRequest pageRequest, String nome, String descricao) {
+		log.info("Buscando Obras Com Filtro Customizado{}");
+		return this.obraCustomRepository.find(pageRequest, nome, descricao);
 	}
 
 }

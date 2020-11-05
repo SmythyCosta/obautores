@@ -1,6 +1,7 @@
 package com.example.demo.controllers;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -33,6 +34,7 @@ import com.example.demo.models.Obra;
 import com.example.demo.response.Response;
 import com.example.demo.service.imp.AutorService;
 import com.example.demo.service.imp.ObraService;
+import com.example.demo.util.DataUtil;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -45,6 +47,7 @@ import io.swagger.annotations.ApiOperation;
 public class ObraControlle {
 	
 	private static final Logger log = LoggerFactory.getLogger(ObraControlle.class);
+	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	@Autowired
 	private ObraService obraService;
@@ -119,14 +122,15 @@ public class ObraControlle {
 		log.info("criando nova abra: {}", dto.toString());
 		Response<ObraResponseDTO> response = new Response<ObraResponseDTO>();
 		
-		Obra obra = this.parserToEntity(dto);
-		ValidaObra(obra, result);
+		ValidaObra(dto, result);
 		
 		if (result.hasErrors()) {
 			log.error("Erro validando Obra: {}", result.getAllErrors());
 			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
 			return ResponseEntity.badRequest().body(response);
 		}
+		
+		Obra obra = this.parserToEntity(dto);
 		
 		response.setData(this.parserToDTO(this.obraService.persistir(obra)));
 		return ResponseEntity.ok(response);
@@ -140,15 +144,15 @@ public class ObraControlle {
 		Response<ObraResponseDTO> response = new Response<ObraResponseDTO>();
 		
 		dto.setId(Optional.of(id));		
-		Obra entity = this.parserToEntity(dto);
-		
-		ValidaObra(entity, result);
-		
+		ValidaObra(dto, result);
+
 		if (result.hasErrors()) {
 			log.error("Erro validando Obra: {}", result.getAllErrors());
 			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
 			return ResponseEntity.badRequest().body(response);
 		}
+		
+		Obra entity = this.parserToEntity(dto);
 		
 		response.setData(this.parserToDTO(this.obraService.persistir(entity)));
 		return ResponseEntity.ok(response);
@@ -172,7 +176,7 @@ public class ObraControlle {
 		return ResponseEntity.ok(new Response<String>());		
 	}	
 	
-	private Obra parserToEntity(ObraRequestDTO dto) {
+	private Obra parserToEntity(ObraRequestDTO dto) throws ParseException {
 		
 		Obra entity = new Obra();
 		
@@ -182,8 +186,9 @@ public class ObraControlle {
 		entity.setNome(dto.getNome());
 		entity.setDescricao(dto.getDescricao());
 		entity.setImagem(dto.getImagem());
-		entity.setDataPublicacao(dto.getDataPublicacao());
-		entity.setDataExposicao(dto.getDataExposicao());;
+		entity.setDataPublicacao(this.dateFormat.parse(dto.getDataPublicacao()));
+		entity.setDataExposicao(this.dateFormat.parse(dto.getDataExposicao()));
+		
 		
 		dto.getAutorId().forEach(autorRequest -> {
 			Optional<Autor> out = autorService.buscarPorId(autorRequest);
@@ -203,38 +208,48 @@ public class ObraControlle {
 		dto.setNome(entity.getNome());
 		dto.setDescricao(entity.getDescricao());
 		dto.setImagem(entity.getImagem());
-		dto.setDataPublicacao(entity.getDataPublicacao());
-		dto.setDataExposicao(entity.getDataExposicao());
+		dto.setDataPublicacao(this.dateFormat.format(entity.getDataPublicacao()));
+		dto.setDataExposicao(this.dateFormat.format(entity.getDataExposicao()));
 		dto.getAutor().addAll(entity.getAutor());
 
 		return dto;
 	}
 	
-	private void ValidaObra(Obra obra, BindingResult result) {
+	private void ValidaObra(ObraRequestDTO dto, BindingResult result) {
 		
 		boolean checkName = true;
 		
-		if (obra.getAutor().isEmpty()) {
+		if (dto.getAutorId().isEmpty()) {
 			result.addError(new ObjectError("Autor", "Uma Obra deve possuir no mínimo um Autor. "));
 		}				
-		if (obra.getDataPublicacao() == null || obra.getDataExposicao() == null) {
+		if (dto.getDataPublicacao() == null || dto.getDataExposicao() == null) {
 			result.addError(new ObjectError("Datas", "DataPublicacao ou DataExposicao Devem ser preenchida. "));
+		}
+		if (dto.getDataPublicacao() != null) {
+			if (!DataUtil.isDateValid(dto.getDataPublicacao())) {
+				result.addError(new ObjectError("Datas", "DataPublicacao Inválida. "));
+			}
+		}
+		if (dto.getDataExposicao() != null) {
+			if (!DataUtil.isDateValid(dto.getDataExposicao())) {
+				result.addError(new ObjectError("Datas", "DataExposicao Inválida. "));
+			}
 		}
 		
 		// ================================
 		// Validando na edição 
 		// ================================
-		if (obra.getId() != null) {
-			Optional<Obra> entity = this.obraService.buscarPorId(obra.getId());	
+		if (dto.getId().isPresent()) {
+			Optional<Obra> entity = this.obraService.buscarPorId(dto.getId().get());	
 			if (entity.isPresent()) {
-				if (entity.get().getNome().equalsIgnoreCase(obra.getNome())) {
+				if (entity.get().getNome().equalsIgnoreCase(dto.getNome())) {
 					checkName = false;
 				}				
 			}
 		}
 		
 		if (checkName) {
-			this.obraService.buscarPorNome(obra.getNome()).ifPresent(
+			this.obraService.buscarPorNome(dto.getNome()).ifPresent(
 					e -> result.addError(new ObjectError("Nome", "Nome já existente. "))
 			);		
 		}
