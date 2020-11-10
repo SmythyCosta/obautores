@@ -1,6 +1,7 @@
 package com.example.demo.controllers;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -34,6 +35,7 @@ import com.example.demo.models.Autor;
 import com.example.demo.response.Response;
 import com.example.demo.service.imp.AutorService;
 import com.example.demo.util.CpfUtil;
+import com.example.demo.util.DataUtil;
 import com.example.demo.util.EmailUtil;
 
 import io.swagger.annotations.Api;
@@ -46,6 +48,7 @@ import io.swagger.annotations.ApiOperation;
 public class AutorControlle {
 	
 	private static final Logger log = LoggerFactory.getLogger(AutorControlle.class);
+	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	@Autowired
 	private AutorService autorService;
@@ -151,6 +154,7 @@ public class AutorControlle {
 		return ResponseEntity.ok(new Response<String>());		
 	}
 	
+	
 
 	private void ValidaAutor(AutorDTO objDTO, BindingResult result) {
 		
@@ -165,13 +169,15 @@ public class AutorControlle {
 		}
 		
 		if (objDTO.getPaisOrigem().equalsIgnoreCase(PaisEnum.BRASIL.toString())) {
+			objDTO.setCpf(CpfUtil.displaysOnlyNumbers(objDTO.getCpf()));
 			if (!CpfUtil.valida(objDTO.getCpf())){
 				result.addError(new ObjectError("CPF", "Cpf inválido. "));
 			}
+		} else {
+			objDTO.setCpf("");
+			checkCPF = false;
 		}
 		
-		objDTO.setCpf(objDTO.getCpf().replaceAll("[.-]", ""));
-				
 		// ================================
 		// Validando Email e Cpf na edição 
 		// ================================
@@ -188,6 +194,12 @@ public class AutorControlle {
 				if (entity.get().getNome().equalsIgnoreCase(objDTO.getNome())) {
 					checkNome = false;
 				}
+			}
+		}
+		
+		if (objDTO.getDataNascimento() != null) {
+			if (!DataUtil.isDateValid(objDTO.getDataNascimento())) {
+				result.addError(new ObjectError("Datas", "DataNascimento Inválida. "));
 			}
 		}
 				
@@ -222,7 +234,7 @@ public class AutorControlle {
 
 		entity.setNome(dto.getNome());
 		entity.setEmail(dto.getEmail());
-		entity.setDataNascimento(dto.getDataNascimento());
+		entity.setDataNascimento(this.dateFormat.parse(dto.getDataNascimento()));
 		entity.setPaisOrigem(dto.getPaisOrigem());
 		entity.setCpf(dto.getCpf());
 		
@@ -241,7 +253,7 @@ public class AutorControlle {
 		dto.setNome(entity.getNome());
 		dto.setSexo(entity.getSexo().toString());
 		dto.setEmail(entity.getEmail());
-		dto.setDataNascimento(entity.getDataNascimento());
+		dto.setDataNascimento(this.dateFormat.format(entity.getDataNascimento()));
 		dto.setPaisOrigem(entity.getPaisOrigem());
 		dto.setCpf(entity.getCpf());
 		

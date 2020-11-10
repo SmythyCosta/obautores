@@ -15,4 +15,9 @@ public class CpfUtil {
 		retorno = (erros.size() > 0) ? false : true;
 	    return retorno;
 	}
+	
+	public static String displaysOnlyNumbers(String cpf) {
+		return cpf.replaceAll("[.-]", "");
+	}
+	
 }

@@ -23,13 +23,13 @@ public class AutorDTO {
 	@Length(min = 3, max = 200, message = "Nome deve conter entre 3 e 200 caracteres. ")
 	private String nome;
 	
-	@NotBlank(message = "sexo não pode ser vazio. ")
+	@NotBlank(message = "sexo deve ser informado. ")
 	private String sexo;	
 	
 	private String email;
 	
-	@NotBlank(message = "dataNascimento não pode ser vazio. ")
-	private Date dataNascimento;
+	@NotBlank(message = "dataNascimento deve ser informado. ")
+	private String dataNascimento;
 	
 	@NotBlank(message = "O Pais de Origem deve ser informado. ")
 	private String paisOrigem;

@@ -35,6 +35,7 @@ import com.example.demo.response.Response;
 import com.example.demo.service.imp.AutorService;
 import com.example.demo.service.imp.ObraService;
 import com.example.demo.util.DataUtil;
+import com.example.demo.util.StringUtil;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -185,11 +186,14 @@ public class ObraControlle {
 		}
 		entity.setNome(dto.getNome());
 		entity.setDescricao(dto.getDescricao());
-		entity.setImagem(dto.getImagem());
-		entity.setDataPublicacao(this.dateFormat.parse(dto.getDataPublicacao()));
-		entity.setDataExposicao(this.dateFormat.parse(dto.getDataExposicao()));
-		
-		
+		entity.setImagem(dto.getImagem());		
+		if (!StringUtil.isNullOrEmpty(dto.getDataPublicacao())) {
+			entity.setDataPublicacao(this.dateFormat.parse(dto.getDataPublicacao()));
+		}
+		if (!StringUtil.isNullOrEmpty(dto.getDataExposicao())) {
+			entity.setDataExposicao(this.dateFormat.parse(dto.getDataExposicao()));
+		}
+
 		dto.getAutorId().forEach(autorRequest -> {
 			Optional<Autor> out = autorService.buscarPorId(autorRequest);
 			if (out.isPresent()) {
@@ -207,9 +211,13 @@ public class ObraControlle {
 		dto.setId(Optional.of(entity.getId()));
 		dto.setNome(entity.getNome());
 		dto.setDescricao(entity.getDescricao());
-		dto.setImagem(entity.getImagem());
-		dto.setDataPublicacao(this.dateFormat.format(entity.getDataPublicacao()));
-		dto.setDataExposicao(this.dateFormat.format(entity.getDataExposicao()));
+		dto.setImagem(entity.getImagem());		
+		if (entity.getDataPublicacao() != null) {
+			dto.setDataPublicacao(this.dateFormat.format(entity.getDataPublicacao()));
+		}
+		if (entity.getDataExposicao() != null) {
+			dto.setDataExposicao(this.dateFormat.format(entity.getDataExposicao()));
+		}
 		dto.getAutor().addAll(entity.getAutor());
 
 		return dto;
@@ -221,16 +229,19 @@ public class ObraControlle {
 		
 		if (dto.getAutorId().isEmpty()) {
 			result.addError(new ObjectError("Autor", "Uma Obra deve possuir no mínimo um Autor. "));
-		}				
-		if (dto.getDataPublicacao() == null || dto.getDataExposicao() == null) {
+		}
+		
+		if (StringUtil.isNullOrEmpty(dto.getDataPublicacao()) && StringUtil.isNullOrEmpty(dto.getDataExposicao()) ) {
 			result.addError(new ObjectError("Datas", "DataPublicacao ou DataExposicao Devem ser preenchida. "));
 		}
-		if (dto.getDataPublicacao() != null) {
+		
+		if (!StringUtil.isNullOrEmpty(dto.getDataPublicacao())) {
 			if (!DataUtil.isDateValid(dto.getDataPublicacao())) {
 				result.addError(new ObjectError("Datas", "DataPublicacao Inválida. "));
 			}
 		}
-		if (dto.getDataExposicao() != null) {
+		
+		if (!StringUtil.isNullOrEmpty(dto.getDataExposicao())) {
 			if (!DataUtil.isDateValid(dto.getDataExposicao())) {
 				result.addError(new ObjectError("Datas", "DataExposicao Inválida. "));
 			}
