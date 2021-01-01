@@ -72,23 +72,6 @@ public class AutorControlle {
 		return ResponseEntity.ok(response);
 	}
 	
-	@ApiOperation(value="buscar Autor por ID")
-	@GetMapping(value = { "/{id}" })
-	public ResponseEntity<Response<AutorDTO>> buscarPorId(@PathVariable("id") long id) {
-		
-		log.info("Buscando Autor por ID: {}", id);
-		Response<AutorDTO> response = new Response<AutorDTO>();
-		Optional<Autor> entity = this.autorService.buscarPorId(id);
-		
-		if (!entity.isPresent()) {
-			log.info("Autor não encontrado para o ID: {}", id);
-			response.getErrors().add("Autor não encontrado para o id " + id);
-			return ResponseEntity.badRequest().body(response);
-		}
-		
-		response.setData(this.parserToDTO(entity.get()));
-		return ResponseEntity.ok(response);
-	}
 	
 	@ApiOperation(value="Criar novo Autor")
 	@PostMapping()
@@ -131,6 +114,24 @@ public class AutorControlle {
 		
 		entity = this.autorService.persistir(entity);
 		response.setData(this.parserToDTO(entity));
+		return ResponseEntity.ok(response);
+	}
+	
+	@ApiOperation(value="buscar Autor por ID")
+	@GetMapping(value = { "/{id}" })
+	public ResponseEntity<Response<AutorDTO>> buscarPorId(@PathVariable("id") long id) {
+		
+		log.info("Buscando Autor por ID: {}", id);
+		Response<AutorDTO> response = new Response<AutorDTO>();
+		Optional<Autor> entity = this.autorService.buscarPorId(id);
+		
+		if (!entity.isPresent()) {
+			log.info("Autor não encontrado para o ID: {}", id);
+			response.getErrors().add("Autor não encontrado para o id " + id);
+			return ResponseEntity.badRequest().body(response);
+		}
+		
+		response.setData(this.parserToDTO(entity.get()));
 		return ResponseEntity.ok(response);
 	}
 	
