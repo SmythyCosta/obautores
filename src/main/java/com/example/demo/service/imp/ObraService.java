@@ -12,10 +12,10 @@ import org.springframework.stereotype.Service;
 import com.example.demo.models.Obra;
 import com.example.demo.repository.ObraCustomRepository;
 import com.example.demo.repository.ObraRepository;
-import com.example.demo.service.BaseService;
+import com.example.demo.service.IBaseService;
 
 @Service
-public class ObraService implements BaseService<Obra> {
+public class ObraService implements IBaseService<Obra> {
 	
 	private static final Logger log = LoggerFactory.getLogger(ObraService.class);
 	

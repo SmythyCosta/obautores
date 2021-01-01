@@ -78,6 +78,7 @@ public class AutorControlle {
 	@ApiOperation(value="buscar Autor por ID")
 	@GetMapping(value = { "/{id}" })
 	public ResponseEntity<Response<AutorDTO>> buscarPorId(@PathVariable("id") long id) {
+		
 		log.info("Buscando Autor por ID: {}", id);
 		Response<AutorDTO> response = new Response<AutorDTO>();
 		Optional<Autor> entity = this.autorService.buscarPorId(id);

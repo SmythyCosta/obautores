@@ -12,10 +12,10 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.models.Autor;
 import com.example.demo.repository.AutorRepository;
-import com.example.demo.service.BaseService;
+import com.example.demo.service.IBaseService;
 
 @Service
-public class AutorService implements BaseService<Autor> {
+public class AutorService implements IBaseService<Autor> {
 	
 	private static final Logger log = LoggerFactory.getLogger(AutorService.class);
 	

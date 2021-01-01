@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
-public interface AutorService<T> {
+public interface IAutorService<T> {
 
 	/**
 	 * Retorna uma lista paginada.
