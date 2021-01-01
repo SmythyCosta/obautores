@@ -65,13 +65,10 @@ public class AutorControlle {
 		
 		log.info("Listagem de Autores, página: {}", pag);
 		Response<Page<AutorDTO>> response = new Response<Page<AutorDTO>>();
-
 		PageRequest pageRequest = PageRequest.of(pag, this.qtdPorPagina, Sort.Direction.ASC, ord);
-		
-		Page<Autor> autores = this.autorService.listarTodos(pageRequest);
-		Page<AutorDTO> dto = autores.map(a -> this.parserToDTO(a));
+		Page<AutorDTO> responseAutor = this.autorService.listarTodos(pageRequest);
 
-		response.setData(dto);
+		response.setData(responseAutor);
 		return ResponseEntity.ok(response);
 	}
 	

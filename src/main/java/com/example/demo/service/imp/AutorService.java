@@ -1,5 +1,7 @@
 package com.example.demo.service.imp;
 
+
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,61 +12,80 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.dto.AutorDTO;
 import com.example.demo.models.Autor;
 import com.example.demo.repository.AutorRepository;
-import com.example.demo.service.IBaseService;
+import com.example.demo.service.IAutorService;
 
 @Service
-public class AutorService implements IBaseService<Autor> {
+public class AutorService implements IAutorService<Autor> {
 	
 	private static final Logger log = LoggerFactory.getLogger(AutorService.class);
+	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	@Autowired
-	private AutorRepository rep;
+	private AutorRepository repository;
 
 	@Override
-	public Page<Autor> listarTodos(PageRequest pageRequest) {
+	public Page<AutorDTO> listarTodos(PageRequest pageRequest) {
+		
 		log.info("Buscando Autores PageRequest{}", pageRequest);
-		return this.rep.findAll(pageRequest);
+		
+		Page<Autor> autores =  this.repository.findAll(pageRequest);
+		Page<AutorDTO> dto = autores.map(a -> this.parserToDTO(a));
+		return dto;
 	}
 
 	@Override
 	public Autor persistir(Autor t) {
 		log.info("Persistindo Autor: {}", t);
-		return this.rep.save(t);
+		return this.repository.save(t);
 	}
 
 	@Override
 	public void remover(Long id) {
 		log.info("Removendo o Autor ID {}", id);
-		this.rep.deleteById(id);
+		this.repository.deleteById(id);
 		
 	}
 
 	@Override
 	public Optional<Autor> buscarPorId(Long id) {
 		log.info("Buscando um Autor pelo ID {}", id);
-		return this.rep.findById(id);
+		return this.repository.findById(id);
 	}
 	
 	@Override
 	public Optional<Autor> buscarPorNome(String nome) {
 		log.info("Buscando um Autor pelo nome {}", nome);
-		return this.rep.findByNome(nome);
+		return this.repository.findByNome(nome);
 	}
 	
 	public Optional<Autor> buscarPorCpf(String cpf) {
 		log.info("Buscando Autor pelo CPF {}", cpf);
-		return Optional.ofNullable(this.rep.findByCpf(cpf));
+		return Optional.ofNullable(this.repository.findByCpf(cpf));
 	}
 	
 	public Optional<Autor> buscarPorEmail(String email) {
 		log.info("Buscando Autor pelo email {}", email);
-		return Optional.ofNullable(this.rep.findByEmail(email));
+		return Optional.ofNullable(this.repository.findByEmail(email));
 	}
 
 	public List<Autor> buscarAutoresPorObra(Long idObra){
 		log.info("Buscando Autores pelo ID Obra {}", idObra);
-		return this.rep.findAutoresByIdObra (idObra);
+		return this.repository.findAutoresByIdObra (idObra);
+	}
+	
+	private AutorDTO parserToDTO(Autor entity) {
+		AutorDTO dto = new AutorDTO();
+		dto.setId(Optional.of(entity.getId()));
+		dto.setNome(entity.getNome());
+		dto.setSexo(entity.getSexo().toString());
+		dto.setEmail(entity.getEmail());
+		dto.setDataNascimento(this.dateFormat.format(entity.getDataNascimento()));
+		dto.setPaisOrigem(entity.getPaisOrigem());
+		dto.setCpf(entity.getCpf());
+		
+		return dto;
 	}
 }
