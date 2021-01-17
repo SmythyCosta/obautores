@@ -1,11 +1,14 @@
 package com.example.demo.service;
 
+import java.text.ParseException;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.validation.BindingResult;
 
 import com.example.demo.dto.AutorDTO;
+import com.example.demo.exception.BusinessException;
 
 public interface IAutorService<T> {
 
@@ -23,7 +26,7 @@ public interface IAutorService<T> {
 	 * @param id
 	 * @return Obj
 	 */
-	T persistir(T t);
+	AutorDTO persistir(AutorDTO dto, BindingResult result) throws BusinessException, ParseException;
 	
 	
 	/**

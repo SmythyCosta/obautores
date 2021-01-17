@@ -1,17 +1,15 @@
 package com.example.demo.exception;
 
-public class BusinessException extends Exception  {
-	
-	private static final long serialVersionUID = 2148610487071098173L;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-	public BusinessException(String mensagem, Throwable causa) {
-		super(mensagem, causa);
-		causa.printStackTrace();
-	}
+@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+public class BusinessException extends RuntimeException  {
+	
+	private static final long serialVersionUID = 1L;
 
 	public BusinessException(String mensagem) {
 		super(mensagem);
-		// TODO Auto-generated constructor stub
 	}
-
+	
 }

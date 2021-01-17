@@ -1,10 +1,13 @@
 package com.example.demo.service.imp;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.lang3.EnumUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +15,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
+
 import com.example.demo.dto.AutorDTO;
+import com.example.demo.enums.PaisEnum;
+import com.example.demo.enums.SexoEnum;
+import com.example.demo.exception.BusinessException;
 import com.example.demo.models.Autor;
 import com.example.demo.repository.AutorRepository;
 import com.example.demo.service.IAutorService;
+import com.example.demo.util.CpfUtil;
+import com.example.demo.util.DataUtil;
+import com.example.demo.util.EmailUtil;
 
 @Service
 public class AutorService implements IAutorService<Autor> {
@@ -37,9 +49,26 @@ public class AutorService implements IAutorService<Autor> {
 	}
 
 	@Override
-	public Autor persistir(Autor t) {
-		log.info("Persistindo Autor: {}", t);
-		return this.repository.save(t);
+	public AutorDTO persistir(AutorDTO objDTO, BindingResult result) throws BusinessException, ParseException {
+
+		log.info("Persistindo AutorDTO: {}", objDTO);
+		ValidateAutor(objDTO, result);
+		StringBuilder sb = new StringBuilder();
+		//sb.append("[");
+
+
+		if (result.hasErrors()) {
+			log.error("Erro validando Autor: {}", result.getAllErrors());
+
+			result.getAllErrors()
+					.forEach(error -> sb.append(error.getDefaultMessage()));
+
+			throw new BusinessException(sb.toString());
+		}
+		//sb.append("]");
+		
+		Autor autor = this.parserToEntity(objDTO, result);
+		return this.parserToDTO(this.repository.save(autor));
 	}
 
 	@Override
@@ -75,6 +104,21 @@ public class AutorService implements IAutorService<Autor> {
 		log.info("Buscando Autores pelo ID Obra {}", idObra);
 		return this.repository.findAutoresByIdObra (idObra);
 	}
+
+	private Autor parserToEntity(AutorDTO dto, BindingResult result) throws ParseException {
+		Autor entity = new Autor();
+		
+		if (dto.getId().isPresent()) {		
+			entity.setId(dto.getId().get());
+		}
+		entity.setNome(dto.getNome());
+		entity.setEmail(dto.getEmail());
+		entity.setDataNascimento(this.dateFormat.parse(dto.getDataNascimento()));
+		entity.setPaisOrigem(dto.getPaisOrigem());
+		entity.setCpf(dto.getCpf());
+		entity.setSexo(SexoEnum.valueOf(dto.getSexo()));
+		return entity;
+	}
 	
 	private AutorDTO parserToDTO(Autor entity) {
 		AutorDTO dto = new AutorDTO();
@@ -88,4 +132,77 @@ public class AutorService implements IAutorService<Autor> {
 		
 		return dto;
 	}
+
+	private void ValidateAutor(AutorDTO objDTO, BindingResult result) {
+		
+		boolean checkEmail = true;
+		boolean checkCPF = true;
+		boolean checkNome = true;
+		
+		if (!"".equals(objDTO.getEmail().trim())) {
+			if (EmailUtil.isValidEmail(objDTO.getEmail())) {
+				result.addError(new ObjectError("Email", "Email inválido. "));
+			}
+		}
+		
+		if (objDTO.getPaisOrigem().equalsIgnoreCase(PaisEnum.BRASIL.toString())) {
+			objDTO.setCpf(CpfUtil.displaysOnlyNumbers(objDTO.getCpf()));
+			if (!CpfUtil.valida(objDTO.getCpf())){
+				result.addError(new ObjectError("CPF", "Cpf inválido. "));
+			}
+		} else {
+			objDTO.setCpf("");
+			checkCPF = false;
+		}
+		
+		// ================================
+		// Validando Email e Cpf na edição 
+		// ================================
+		if (objDTO.getId().isPresent()) {
+				
+			Optional<Autor> entity = this.buscarPorId(objDTO.getId().get());	
+			if (entity.isPresent()) {
+				if (entity.get().getEmail().equalsIgnoreCase(objDTO.getEmail())) {
+					checkEmail = false;
+				}				
+				if (entity.get().getCpf().equalsIgnoreCase(objDTO.getCpf())) {
+					checkCPF = false;
+				}
+				if (entity.get().getNome().equalsIgnoreCase(objDTO.getNome())) {
+					checkNome = false;
+				}
+			}
+		}
+		
+		if (objDTO.getDataNascimento() != null) {
+			if (!DataUtil.isDateValid(objDTO.getDataNascimento())) {
+				result.addError(new ObjectError("Datas", "DataNascimento Inválida. "));
+			}
+		}
+				
+		if (checkEmail) {
+			this.buscarPorEmail(objDTO.getEmail()).ifPresent(
+					e -> result.addError(new ObjectError("Email", "Email já existente. "))
+			);		
+		}
+			
+		if (checkCPF) {
+			this.buscarPorCpf(objDTO.getCpf()).ifPresent(
+					f -> result.addError(new ObjectError("CPF", "CPF já existente. "))
+			);
+		}
+		
+		if (checkNome) {
+			this.buscarPorNome(objDTO.getNome()).ifPresent(
+					g -> result.addError(new ObjectError("Nome", "Nome já existente. "))
+			);
+		}
+
+		if (!EnumUtils.isValidEnum(SexoEnum.class, objDTO.getSexo())) {
+			result.addError(new ObjectError("sexo", "Tipo de sexo inválido. "));
+		}
+				
+		return;
+	}
+
 }

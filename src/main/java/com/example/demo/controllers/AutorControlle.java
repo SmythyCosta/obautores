@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.dto.AutorDTO;
 import com.example.demo.enums.PaisEnum;
 import com.example.demo.enums.SexoEnum;
+import com.example.demo.exception.BusinessException;
 import com.example.demo.models.Autor;
 import com.example.demo.response.Response;
 import com.example.demo.service.imp.AutorService;
@@ -75,25 +76,17 @@ public class AutorControlle {
 	
 	@ApiOperation(value="Criar novo Autor")
 	@PostMapping()
-	public ResponseEntity<Response<AutorDTO>> criarNovoAutor(@Valid @RequestBody AutorDTO objDTO, BindingResult result) throws ParseException  {
+	public ResponseEntity<Response<AutorDTO>> criarNovoAutor(@Valid @RequestBody AutorDTO objDTO, BindingResult result) 
+		throws BusinessException, ParseException  {
 		
 		log.info("criando novo autor: {}", objDTO.toString());
 		Response<AutorDTO> response = new Response<AutorDTO>();
-		ValidaAutor(objDTO, result);
-		Autor autor = this.parserToEntity(objDTO, result);
-		
-		if (result.hasErrors()) {
-			log.error("Erro validando Autor: {}", result.getAllErrors());
-			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
-			return ResponseEntity.badRequest().body(response);
-		}
-		
-		Autor out = this.autorService.persistir(autor);
-		response.setData(this.parserToDTO(out));
-		
+
+		response.setData(this.autorService.persistir(objDTO, result));
 		return ResponseEntity.ok(response);
 	}
 	
+	/** 
 	@ApiOperation(value="Alterar Autor por ID")
 	@PutMapping(value = "/{id}")
 	public ResponseEntity<Response<AutorDTO>> atualizaAutor(@PathVariable long id, @Valid @RequestBody AutorDTO dto, BindingResult result) throws ParseException {
@@ -102,7 +95,7 @@ public class AutorControlle {
 		Response<AutorDTO> response = new Response<AutorDTO>();
 		
 		dto.setId(Optional.of(id));
-		ValidaAutor(dto, result);		
+		ValidateAutor(dto, result);		
 		
 		Autor entity = this.parserToEntity(dto, result);
 		
@@ -116,6 +109,7 @@ public class AutorControlle {
 		response.setData(this.parserToDTO(entity));
 		return ResponseEntity.ok(response);
 	}
+	*/
 	
 	@ApiOperation(value="buscar Autor por ID")
 	@GetMapping(value = { "/{id}" })
@@ -152,10 +146,8 @@ public class AutorControlle {
 		this.autorService.remover(id);
 		return ResponseEntity.ok(new Response<String>());		
 	}
-	
-	
 
-	private void ValidaAutor(AutorDTO objDTO, BindingResult result) {
+	private void ValidateAutor(AutorDTO objDTO, BindingResult result) {
 		
 		boolean checkEmail = true;
 		boolean checkCPF = true;
@@ -219,6 +211,10 @@ public class AutorControlle {
 					g -> result.addError(new ObjectError("Nome", "Nome já existente. "))
 			);
 		}
+
+		if (!EnumUtils.isValidEnum(SexoEnum.class, objDTO.getSexo())) {
+			result.addError(new ObjectError("sexo", "Tipo de sexo inválido. "));
+		}
 				
 		return;
 	}
@@ -230,19 +226,12 @@ public class AutorControlle {
 		if (dto.getId().isPresent()) {		
 			entity.setId(dto.getId().get());
 		}
-
 		entity.setNome(dto.getNome());
 		entity.setEmail(dto.getEmail());
 		entity.setDataNascimento(this.dateFormat.parse(dto.getDataNascimento()));
 		entity.setPaisOrigem(dto.getPaisOrigem());
 		entity.setCpf(dto.getCpf());
-		
-		if (EnumUtils.isValidEnum(SexoEnum.class, dto.getSexo())) {
-			entity.setSexo(SexoEnum.valueOf(dto.getSexo()));
-		} else {
-			result.addError(new ObjectError("sexo", "Tipo de sexo inválido. "));
-		}
-				
+		entity.setSexo(SexoEnum.valueOf(dto.getSexo()));
 		return entity;
 	}
 	
