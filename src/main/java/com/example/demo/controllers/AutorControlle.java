@@ -46,7 +46,7 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping(value="/api/autor")
 @CrossOrigin(origins = "*")
 @Api(value="API AutorControlle")
-public class AutorControlle {
+public class AutorControlle extends BaseController {
 	
 	private static final Logger log = LoggerFactory.getLogger(AutorControlle.class);
 	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

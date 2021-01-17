@@ -61,7 +61,7 @@ public class AutorService implements IAutorService<Autor> {
 			log.error("Erro validando Autor: {}", result.getAllErrors());
 
 			result.getAllErrors()
-					.forEach(error -> sb.append(error.getDefaultMessage()));
+					.forEach(error -> sb.append(error.getDefaultMessage() + ";"));
 
 			throw new BusinessException(sb.toString());
 		}
