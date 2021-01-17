@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -34,6 +35,9 @@ public class AutorService implements IAutorService<Autor> {
 	
 	private static final Logger log = LoggerFactory.getLogger(AutorService.class);
 	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+	@Value("${delimiter}")
+    private String delimiter;
 	
 	@Autowired
 	private AutorRepository repository;
@@ -54,18 +58,15 @@ public class AutorService implements IAutorService<Autor> {
 		log.info("Persistindo AutorDTO: {}", objDTO);
 		ValidateAutor(objDTO, result);
 		StringBuilder sb = new StringBuilder();
-		//sb.append("[");
-
 
 		if (result.hasErrors()) {
 			log.error("Erro validando Autor: {}", result.getAllErrors());
 
 			result.getAllErrors()
-					.forEach(error -> sb.append(error.getDefaultMessage() + ";"));
+					.forEach(error -> sb.append(error.getDefaultMessage() + this.delimiter));
 
 			throw new BusinessException(sb.toString());
 		}
-		//sb.append("]");
 		
 		Autor autor = this.parserToEntity(objDTO, result);
 		return this.parserToDTO(this.repository.save(autor));
