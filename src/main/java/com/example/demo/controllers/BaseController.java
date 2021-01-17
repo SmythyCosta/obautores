@@ -7,22 +7,24 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import com.example.demo.exception.BusinessException;
 
-import com.example.demo.response.ErrorMessege;
+import com.example.demo.response.ErrorMessegeResponse;
 
 public class BaseController {
 
-	ErrorMessege errorMessege = new ErrorMessege();
+	ErrorMessegeResponse errorMessegeRespose = new ErrorMessegeResponse();
 
     @ExceptionHandler(BusinessException.class)
 	public ResponseEntity<?> handlerBusinessException(BusinessException e) {
+		
+		String errorMessegesFull = e.getMessage();
+		emptyErrorMessegeRespose();
 
-		if(checkDelimiter(e.getMessage())) {
-			long qtd = countErros(e.getMessage());
-			processList(e.getMessage(), qtd);
+		if(checkDelimiter(errorMessegesFull)) {
+			long qtd = countErros(errorMessegesFull);
+			processErrorMessegeResponse(errorMessegesFull, qtd);
 		}
 
-		this.errorMessege.setTimestamp(LocalDateTime.now());
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessege);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessegeRespose);
 	}
 
 	private boolean checkDelimiter(String erros) {
@@ -39,11 +41,17 @@ public class BaseController {
 		return count;
 	}
 
-	private void processList(String message, long qtd) {
+	private void processErrorMessegeResponse(String message, long qtd) {
 		String listErros[] = message.split(";");
 		for (int i = 0; i < qtd; i++) {
-			this.errorMessege.getErrors().add(listErros[i]);
+			this.errorMessegeRespose.getErrors().add(listErros[i]);
 		}
+
+		this.errorMessegeRespose.setTimestamp(LocalDateTime.now());
+	}
+
+	private void emptyErrorMessegeRespose() {
+		this.errorMessegeRespose.getErrors().clear();
 	}
 
 }

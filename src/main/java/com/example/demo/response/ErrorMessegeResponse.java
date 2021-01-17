@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ErrorMessege {
+public class ErrorMessegeResponse {
 
     private LocalDateTime timestamp;
     private List<String> errors = new ArrayList<>();
