@@ -54,17 +54,15 @@ public class AutorService implements IAutorService<Autor> {
 
 	@Override
 	public AutorDTO persistir(AutorDTO objDTO, BindingResult result) throws BusinessException, ParseException {
-
 		log.info("Persistindo AutorDTO: {}", objDTO);
+		
 		ValidateAutor(objDTO, result);
 		StringBuilder sb = new StringBuilder();
 
 		if (result.hasErrors()) {
 			log.error("Erro validando Autor: {}", result.getAllErrors());
-
 			result.getAllErrors()
 					.forEach(error -> sb.append(error.getDefaultMessage() + this.delimiter));
-
 			throw new BusinessException(sb.toString());
 		}
 		

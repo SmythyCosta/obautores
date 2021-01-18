@@ -73,11 +73,10 @@ public class AutorControlle extends BaseController {
 		return ResponseEntity.ok(response);
 	}
 	
-	
 	@ApiOperation(value="Criar novo Autor")
 	@PostMapping()
 	public ResponseEntity<Response<AutorDTO>> criarNovoAutor(@Valid @RequestBody AutorDTO objDTO, BindingResult result) 
-		throws BusinessException, ParseException  {
+			throws BusinessException, ParseException  {
 		
 		log.info("criando novo autor: {}", objDTO.toString());
 		Response<AutorDTO> response = new Response<AutorDTO>();
@@ -86,30 +85,18 @@ public class AutorControlle extends BaseController {
 		return ResponseEntity.ok(response);
 	}
 	
-	/** 
 	@ApiOperation(value="Alterar Autor por ID")
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<Response<AutorDTO>> atualizaAutor(@PathVariable long id, @Valid @RequestBody AutorDTO dto, BindingResult result) throws ParseException {
+	public ResponseEntity<Response<AutorDTO>> atualizaAutor(@PathVariable long id, @Valid @RequestBody AutorDTO dto, BindingResult result) 
+			throws BusinessException, ParseException {
 		
-		log.info("Atualizando lançamento: {}", dto.toString());
+		log.info("Atualizando Autor: {}", dto.toString());
 		Response<AutorDTO> response = new Response<AutorDTO>();
 		
 		dto.setId(Optional.of(id));
-		ValidateAutor(dto, result);		
-		
-		Autor entity = this.parserToEntity(dto, result);
-		
-		if (result.hasErrors()) {
-			log.error("Erro validando Autor: {}", result.getAllErrors());
-			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
-			return ResponseEntity.badRequest().body(response);
-		}
-		
-		entity = this.autorService.persistir(entity);
-		response.setData(this.parserToDTO(entity));
+		response.setData(this.autorService.persistir(dto, result)); 
 		return ResponseEntity.ok(response);
 	}
-	*/
 	
 	@ApiOperation(value="buscar Autor por ID")
 	@GetMapping(value = { "/{id}" })
