@@ -104,15 +104,8 @@ public class AutorControlle extends BaseController {
 		
 		log.info("Buscando Autor por ID: {}", id);
 		Response<AutorDTO> response = new Response<AutorDTO>();
-		Optional<Autor> entity = this.autorService.buscarPorId(id);
+		response.setData(this.autorService.buscarPorId(id));
 		
-		if (!entity.isPresent()) {
-			log.info("Autor não encontrado para o ID: {}", id);
-			response.getErrors().add("Autor não encontrado para o id " + id);
-			return ResponseEntity.badRequest().body(response);
-		}
-		
-		response.setData(this.parserToDTO(entity.get()));
 		return ResponseEntity.ok(response);
 	}
 	

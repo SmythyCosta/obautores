@@ -35,7 +35,7 @@ public interface IAutorService<T> {
 	 * @param id
 	 * @return Optional<Entity>
 	 */
-	Optional<T> buscarPorId(Long id);
+	AutorDTO buscarPorId(Long id);
 	
 	/**
 	 * Retorna um Obj por nome.

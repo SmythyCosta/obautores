@@ -78,9 +78,19 @@ public class AutorService implements IAutorService<Autor> {
 	}
 
 	@Override
-	public Optional<Autor> buscarPorId(Long id) {
+	public AutorDTO buscarPorId(Long id) {
 		log.info("Buscando um Autor pelo ID {}", id);
-		return this.repository.findById(id);
+
+		StringBuilder sb = new StringBuilder();
+		Optional<Autor> entity = this.repository.findById(id);
+
+		if (!entity.isPresent()) {
+			log.info("Autor não encontrado para o ID: {}", id);
+			sb.append("Autor não encontrado para o id " + id + this.delimiter);
+			//throw new BusinessException(sb.toString());
+		}
+		
+		return this.parserToDTO(entity.get());
 	}
 	
 	@Override
