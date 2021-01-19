@@ -3,7 +3,7 @@ package com.example.demo.exception.impl;
 import java.time.LocalDateTime;
 
 import com.example.demo.exception.BusinessException;
-import com.example.demo.exception.IExceptionHandlerBusinessException;
+import com.example.demo.exception.IHandlerBusinessException;
 import com.example.demo.response.ErrorMessegeResponse;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ExceptionHandlerBusinessException implements IExceptionHandlerBusinessException {
+public class HandlerBusinessException implements IHandlerBusinessException {
 
     ErrorMessegeResponse errorMessegeRespose = new ErrorMessegeResponse();
 

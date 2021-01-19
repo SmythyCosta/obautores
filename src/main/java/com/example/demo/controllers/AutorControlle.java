@@ -32,6 +32,7 @@ import com.example.demo.dto.AutorDTO;
 import com.example.demo.enums.PaisEnum;
 import com.example.demo.enums.SexoEnum;
 import com.example.demo.exception.BusinessException;
+import com.example.demo.exception.NotFoundException;
 import com.example.demo.models.Autor;
 import com.example.demo.response.Response;
 import com.example.demo.service.imp.AutorService;
@@ -76,7 +77,7 @@ public class AutorControlle extends BaseController {
 	@ApiOperation(value="Criar novo Autor")
 	@PostMapping()
 	public ResponseEntity<Response<AutorDTO>> criarNovoAutor(@Valid @RequestBody AutorDTO objDTO, BindingResult result) 
-			throws BusinessException, ParseException  {
+			throws BusinessException, ParseException, javassist.NotFoundException  {
 		
 		log.info("criando novo autor: {}", objDTO.toString());
 		Response<AutorDTO> response = new Response<AutorDTO>();
@@ -88,7 +89,7 @@ public class AutorControlle extends BaseController {
 	@ApiOperation(value="Alterar Autor por ID")
 	@PutMapping(value = "/{id}")
 	public ResponseEntity<Response<AutorDTO>> atualizaAutor(@PathVariable long id, @Valid @RequestBody AutorDTO dto, BindingResult result) 
-			throws BusinessException, ParseException {
+			throws BusinessException, ParseException, javassist.NotFoundException {
 		
 		log.info("Atualizando Autor: {}", dto.toString());
 		Response<AutorDTO> response = new Response<AutorDTO>();
@@ -100,7 +101,7 @@ public class AutorControlle extends BaseController {
 	
 	@ApiOperation(value="buscar Autor por ID")
 	@GetMapping(value = { "/{id}" })
-	public ResponseEntity<Response<AutorDTO>> buscarPorId(@PathVariable("id") long id) {
+	public ResponseEntity<Response<AutorDTO>> buscarPorId(@PathVariable("id") long id) throws NotFoundException {
 		
 		log.info("Buscando Autor por ID: {}", id);
 		Response<AutorDTO> response = new Response<AutorDTO>();
@@ -109,6 +110,7 @@ public class AutorControlle extends BaseController {
 		return ResponseEntity.ok(response);
 	}
 	
+	/*
 	@ApiOperation(value="Deletar Por ID")
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Response<String>> deletar(@PathVariable("id") Long id) {
@@ -126,7 +128,9 @@ public class AutorControlle extends BaseController {
 		this.autorService.remover(id);
 		return ResponseEntity.ok(new Response<String>());		
 	}
-
+	*/
+	
+	/*
 	private void ValidateAutor(AutorDTO objDTO, BindingResult result) {
 		
 		boolean checkEmail = true;
@@ -198,7 +202,9 @@ public class AutorControlle extends BaseController {
 				
 		return;
 	}
+	*/
 		
+	/*
 	private Autor parserToEntity(AutorDTO dto, BindingResult result) throws ParseException {
 		
 		Autor entity = new Autor();
@@ -214,7 +220,9 @@ public class AutorControlle extends BaseController {
 		entity.setSexo(SexoEnum.valueOf(dto.getSexo()));
 		return entity;
 	}
+	*/
 	
+	/*
 	private AutorDTO parserToDTO(Autor entity) {
 		AutorDTO dto = new AutorDTO();
 		dto.setId(Optional.of(entity.getId()));
@@ -227,4 +235,5 @@ public class AutorControlle extends BaseController {
 		
 		return dto;
 	}
+	*/
 }

@@ -9,6 +9,7 @@ import org.springframework.validation.BindingResult;
 
 import com.example.demo.dto.AutorDTO;
 import com.example.demo.exception.BusinessException;
+import com.example.demo.exception.NotFoundException;
 
 public interface IAutorService<T> {
 
@@ -25,17 +26,20 @@ public interface IAutorService<T> {
 	 * 
 	 * @param id
 	 * @return Obj
+	 * @throws javassist.NotFoundException 
 	 */
-	AutorDTO persistir(AutorDTO dto, BindingResult result) throws BusinessException, ParseException;
+	AutorDTO persistir(AutorDTO dto, BindingResult result) throws BusinessException, NotFoundException, ParseException, javassist.NotFoundException;
 	
 	
 	/**
 	 * Retorna um Obj por ID.
 	 * 
 	 * @param id
-	 * @return Optional<Entity>
+	 * @return AutorDTO
+	 * @throws javassist.NotFoundException
+	 * @throws BusinessException 
 	 */
-	AutorDTO buscarPorId(Long id);
+	AutorDTO buscarPorId(Long id) throws NotFoundException;
 	
 	/**
 	 * Retorna um Obj por nome.

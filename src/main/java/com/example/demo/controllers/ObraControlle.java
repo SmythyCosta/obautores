@@ -59,6 +59,8 @@ public class ObraControlle {
 	@Value("${paginacao.qtd_por_pagina}")
 	private int qtdPorPagina;
 	
+	
+	/**
 	@ApiOperation(value="listar Obras")
 	@GetMapping(value = "/listarObras")
 	public ResponseEntity<Response<Page<ObraResponseDTO>>> listarObras(
@@ -267,5 +269,6 @@ public class ObraControlle {
 		
 		return;
 	}
+	*/
 	
 }

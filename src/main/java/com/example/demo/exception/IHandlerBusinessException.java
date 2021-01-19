@@ -4,7 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 @Component
-public interface IExceptionHandlerBusinessException {
+public interface IHandlerBusinessException {
 
     ResponseEntity<?> handlerBusinessException(BusinessException e);
 

@@ -23,6 +23,7 @@ import com.example.demo.dto.AutorDTO;
 import com.example.demo.enums.PaisEnum;
 import com.example.demo.enums.SexoEnum;
 import com.example.demo.exception.BusinessException;
+import com.example.demo.exception.NotFoundException;
 import com.example.demo.models.Autor;
 import com.example.demo.repository.AutorRepository;
 import com.example.demo.service.IAutorService;
@@ -53,7 +54,7 @@ public class AutorService implements IAutorService<Autor> {
 	}
 
 	@Override
-	public AutorDTO persistir(AutorDTO objDTO, BindingResult result) throws BusinessException, ParseException {
+	public AutorDTO persistir(AutorDTO objDTO, BindingResult result) throws BusinessException, ParseException, NotFoundException {
 		log.info("Persistindo AutorDTO: {}", objDTO);
 		
 		ValidateAutor(objDTO, result);
@@ -78,7 +79,7 @@ public class AutorService implements IAutorService<Autor> {
 	}
 
 	@Override
-	public AutorDTO buscarPorId(Long id) {
+	public AutorDTO buscarPorId(Long id) throws NotFoundException {
 		log.info("Buscando um Autor pelo ID {}", id);
 
 		StringBuilder sb = new StringBuilder();
@@ -87,7 +88,7 @@ public class AutorService implements IAutorService<Autor> {
 		if (!entity.isPresent()) {
 			log.info("Autor não encontrado para o ID: {}", id);
 			sb.append("Autor não encontrado para o id " + id + this.delimiter);
-			//throw new BusinessException(sb.toString());
+			throw new NotFoundException(sb.toString());
 		}
 		
 		return this.parserToDTO(entity.get());
@@ -142,7 +143,7 @@ public class AutorService implements IAutorService<Autor> {
 		return dto;
 	}
 
-	private void ValidateAutor(AutorDTO objDTO, BindingResult result) {
+	private void ValidateAutor(AutorDTO objDTO, BindingResult result) throws NotFoundException {
 		
 		boolean checkEmail = true;
 		boolean checkCPF = true;
@@ -169,15 +170,15 @@ public class AutorService implements IAutorService<Autor> {
 		// ================================
 		if (objDTO.getId().isPresent()) {
 				
-			Optional<Autor> entity = this.buscarPorId(objDTO.getId().get());	
-			if (entity.isPresent()) {
-				if (entity.get().getEmail().equalsIgnoreCase(objDTO.getEmail())) {
+			AutorDTO entity = this.buscarPorId(objDTO.getId().get());	
+			if (entity != null) {
+				if (entity.getEmail().equalsIgnoreCase(objDTO.getEmail())) {
 					checkEmail = false;
 				}				
-				if (entity.get().getCpf().equalsIgnoreCase(objDTO.getCpf())) {
+				if (entity.getCpf().equalsIgnoreCase(objDTO.getCpf())) {
 					checkCPF = false;
 				}
-				if (entity.get().getNome().equalsIgnoreCase(objDTO.getNome())) {
+				if (entity.getNome().equalsIgnoreCase(objDTO.getNome())) {
 					checkNome = false;
 				}
 			}
