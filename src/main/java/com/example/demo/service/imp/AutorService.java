@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -26,6 +27,7 @@ import com.example.demo.exception.BusinessException;
 import com.example.demo.exception.NotFoundException;
 import com.example.demo.models.Autor;
 import com.example.demo.repository.AutorRepository;
+import com.example.demo.response.Response;
 import com.example.demo.service.IAutorService;
 import com.example.demo.util.CpfUtil;
 import com.example.demo.util.DataUtil;
@@ -74,8 +76,8 @@ public class AutorService implements IAutorService<Autor> {
 	@Override
 	public void remover(Long id) {
 		log.info("Removendo o Autor ID {}", id);
-		this.repository.deleteById(id);
-		
+		AutorDTO entity = this.buscarPorId(id);
+		this.repository.deleteById(entity.getId().get());
 	}
 
 	@Override

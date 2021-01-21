@@ -110,25 +110,15 @@ public class AutorControlle extends BaseController {
 		return ResponseEntity.ok(response);
 	}
 	
-	/*
+	
 	@ApiOperation(value="Deletar Por ID")
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Response<String>> deletar(@PathVariable("id") Long id) {
-		
 		log.info("Removendo Autor: {}", id);
-		Response<String> response = new Response<String>();
-		Optional<Autor> entity = this.autorService.buscarPorId(id);
-		
-		if (!entity.isPresent()) {
-			log.info("Erro ao remover Autor devido ID: {} ser inválido. ", id);
-			response.getErrors().add("Erro ao remover Autor. Registro não encontrado para o id " + id);
-			return ResponseEntity.badRequest().body(response);
-		}
-		
 		this.autorService.remover(id);
 		return ResponseEntity.ok(new Response<String>());		
 	}
-	*/
+	
 	
 	/*
 	private void ValidateAutor(AutorDTO objDTO, BindingResult result) {
