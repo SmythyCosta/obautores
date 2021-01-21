@@ -34,9 +34,9 @@ import com.example.demo.util.DataUtil;
 import com.example.demo.util.EmailUtil;
 
 @Service
-public class AutorService implements IAutorService<Autor> {
+public class ActorService implements IAutorService<Autor> {
 	
-	private static final Logger log = LoggerFactory.getLogger(AutorService.class);
+	private static final Logger log = LoggerFactory.getLogger(ActorService.class);
 	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	@Value("${delimiter}")

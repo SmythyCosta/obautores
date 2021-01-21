@@ -8,12 +8,10 @@ import org.hibernate.validator.constraints.Length;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 
 @Getter
-@Setter
-@ToString 
+@Setter 
 public class AutorDTO {
 	
 	private Optional<Long> id = Optional.empty();
@@ -34,5 +32,11 @@ public class AutorDTO {
 	private String paisOrigem;
 	
 	private String cpf;
+
+	@Override
+	public String toString() {
+		return "AutorDTO [id=" + id + ", nome=" + nome + ", sexo=" + sexo + ", email=" + email + ", dataNascimento="
+				+ dataNascimento + ", paisOrigem=" + paisOrigem + ", cpf=" + cpf + "]";
+	}
 	
 }

@@ -32,7 +32,7 @@ import com.example.demo.dto.ObraResponseDTO;
 import com.example.demo.models.Autor;
 import com.example.demo.models.Obra;
 import com.example.demo.response.Response;
-import com.example.demo.service.imp.AutorService;
+import com.example.demo.service.imp.ActorService;
 import com.example.demo.service.imp.ObraService;
 import com.example.demo.util.DataUtil;
 import com.example.demo.util.StringUtil;
@@ -54,9 +54,9 @@ public class ObraControlle {
 	private ObraService obraService;
 	
 	@Autowired
-	private AutorService autorService;
+	private ActorService autorService;
 	
-	@Value("${paginacao.qtd_por_pagina}")
+	@Value("${paginacao.quantityPerPage}")
 	private int qtdPorPagina;
 	
 	
