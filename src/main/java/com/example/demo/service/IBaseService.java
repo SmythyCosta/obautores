@@ -5,6 +5,8 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
+import com.example.demo.dto.ObraResponseDTO;
+
 public interface IBaseService<T> {
 
 	/**
@@ -13,7 +15,7 @@ public interface IBaseService<T> {
 	 * @param pageRequest
 	 * @return Page<T>
 	 */
-	Page<T> listarTodos(PageRequest pageRequest);
+	Page<ObraResponseDTO> listarTodos(PageRequest pageRequest);
 	
 	/**
 	 * Persiste um Obj na base de dados.

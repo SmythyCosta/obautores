@@ -1,5 +1,6 @@
 package com.example.demo.service.imp;
 
+import java.text.SimpleDateFormat;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -7,17 +8,22 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.dto.ObraResponseDTO;
 import com.example.demo.models.Obra;
 import com.example.demo.repository.ObraCustomRepository;
 import com.example.demo.repository.ObraRepository;
+import com.example.demo.response.Response;
 import com.example.demo.service.IBaseService;
 
 @Service
-public class ObraService implements IBaseService<Obra> {
+public class WorkService implements IBaseService<Obra> {
 	
-	private static final Logger log = LoggerFactory.getLogger(ObraService.class);
+	private static final Logger log = LoggerFactory.getLogger(WorkService.class);
+	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	@Autowired
 	private ObraRepository rep;
@@ -26,9 +32,13 @@ public class ObraService implements IBaseService<Obra> {
 	private ObraCustomRepository obraCustomRepository;
 
 	@Override
-	public Page<Obra> listarTodos(PageRequest pageRequest) {
-		log.info("Buscando Obras PageRequest{}", pageRequest);
-		return this.rep.findAll(pageRequest);
+	public Page<ObraResponseDTO> listarTodos(PageRequest pageRequest) {
+		log.info("Search Works PageRequest{}", pageRequest);
+
+		Page<Obra> o = this.rep.findAll(pageRequest);
+		Page<ObraResponseDTO> dto = o.map(a -> this.parserToDTO(a));
+		
+		return dto;
 	}
 
 	@Override
@@ -58,6 +68,25 @@ public class ObraService implements IBaseService<Obra> {
 	public Page<Obra> filtar(PageRequest pageRequest, String nome, String descricao) {
 		log.info("Buscando Obras Com Filtro Customizado{}");
 		return this.obraCustomRepository.find(pageRequest, nome, descricao);
+	}
+	
+	private ObraResponseDTO parserToDTO(Obra entity) {
+		
+		ObraResponseDTO dto = new ObraResponseDTO();
+		
+		dto.setId(Optional.of(entity.getId()));
+		dto.setNome(entity.getNome());
+		dto.setDescricao(entity.getDescricao());
+		dto.setImagem(entity.getImagem());		
+		if (entity.getDataPublicacao() != null) {
+			dto.setDataPublicacao(this.dateFormat.format(entity.getDataPublicacao()));
+		}
+		if (entity.getDataExposicao() != null) {
+			dto.setDataExposicao(this.dateFormat.format(entity.getDataExposicao()));
+		}
+		dto.getAutor().addAll(entity.getAutor());
+
+		return dto;
 	}
 
 }

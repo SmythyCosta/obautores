@@ -33,7 +33,7 @@ import com.example.demo.models.Autor;
 import com.example.demo.models.Obra;
 import com.example.demo.response.Response;
 import com.example.demo.service.imp.ActorService;
-import com.example.demo.service.imp.ObraService;
+import com.example.demo.service.imp.WorkService;
 import com.example.demo.util.DataUtil;
 import com.example.demo.util.StringUtil;
 
@@ -42,43 +42,45 @@ import io.swagger.annotations.ApiOperation;
 
 
 @RestController
-@RequestMapping(value="/api/obra")
+@RequestMapping(value="/api/works")
 @CrossOrigin(origins = "*")
 @Api(value="API ObraControlle")
-public class ObraControlle {
+public class WorkControlle {
 	
-	private static final Logger log = LoggerFactory.getLogger(ObraControlle.class);
+	private static final Logger log = LoggerFactory.getLogger(WorkControlle.class);
 	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	@Autowired
-	private ObraService obraService;
+	private WorkService workService;
 	
 	@Autowired
-	private ActorService autorService;
+	private ActorService actorService;
 	
 	@Value("${paginacao.quantityPerPage}")
 	private int qtdPorPagina;
 	
 	
-	/**
-	@ApiOperation(value="listar Obras")
-	@GetMapping(value = "/listarObras")
+	
+	@ApiOperation(value="list Works")
+	@GetMapping(value = "/list")
 	public ResponseEntity<Response<Page<ObraResponseDTO>>> listarObras(
 			@RequestParam(value = "pag", defaultValue = "0") int pag,
 			@RequestParam(value = "ord", defaultValue = "id") String ord,
 			@RequestParam(value = "dir", defaultValue = "DESC") String dir) {
 		
 		log.info("Listagem de Obra, página: {}", pag);
+		
 		Response<Page<ObraResponseDTO>> response = new Response<Page<ObraResponseDTO>>();
 		PageRequest pageRequest = PageRequest.of(pag, this.qtdPorPagina, Sort.Direction.ASC, ord);
 		
-		Page<Obra> o = this.obraService.listarTodos(pageRequest);
-		Page<ObraResponseDTO> dto = o.map(a -> this.parserToDTO(a));
+		Page<ObraResponseDTO> dto = this.workService.listarTodos(pageRequest);
 		
 		response.setData(dto);
 		return ResponseEntity.ok(response);
 	}
 	
+	
+	/**
 	@ApiOperation(value="filtrando Obras")
 	@GetMapping("/filtrarObras")
     public ResponseEntity<Response<Page<ObraResponseDTO>>> filtraObra(  
