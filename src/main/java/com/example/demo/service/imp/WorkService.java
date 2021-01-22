@@ -1,5 +1,6 @@
 package com.example.demo.service.imp;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Optional;
 
@@ -12,12 +13,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.dto.ObraRequestDTO;
 import com.example.demo.dto.ObraResponseDTO;
 import com.example.demo.models.Obra;
-import com.example.demo.repository.ObraCustomRepository;
-import com.example.demo.repository.ObraRepository;
+import com.example.demo.repository.WorkCustomRepository;
+import com.example.demo.repository.WorkRepository;
 import com.example.demo.response.Response;
 import com.example.demo.service.IBaseService;
+import com.example.demo.util.StringUtil;
 
 @Service
 public class WorkService implements IBaseService<Obra> {
@@ -26,10 +29,10 @@ public class WorkService implements IBaseService<Obra> {
 	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	@Autowired
-	private ObraRepository rep;
+	private WorkRepository rep;
 	
 	@Autowired
-	private ObraCustomRepository obraCustomRepository;
+	private WorkCustomRepository workCustomRepository;
 
 	@Override
 	public Page<ObraResponseDTO> listarTodos(PageRequest pageRequest) {
@@ -67,7 +70,7 @@ public class WorkService implements IBaseService<Obra> {
 	
 	public Page<Obra> filtar(PageRequest pageRequest, String nome, String descricao) {
 		log.info("Buscando Obras Com Filtro Customizado{}");
-		return this.obraCustomRepository.find(pageRequest, nome, descricao);
+		return this.workCustomRepository.find(pageRequest, nome, descricao);
 	}
 	
 	private ObraResponseDTO parserToDTO(Obra entity) {
@@ -88,5 +91,81 @@ public class WorkService implements IBaseService<Obra> {
 
 		return dto;
 	}
+	
+	/*
+	private Obra parserToEntity(ObraRequestDTO dto) throws ParseException {
+		
+		Obra entity = new Obra();
+		
+		if (dto.getId().isPresent()) {		
+			entity.setId(dto.getId().get());
+		}
+		entity.setNome(dto.getNome());
+		entity.setDescricao(dto.getDescricao());
+		entity.setImagem(dto.getImagem());		
+		if (!StringUtil.isNullOrEmpty(dto.getDataPublicacao())) {
+			entity.setDataPublicacao(this.dateFormat.parse(dto.getDataPublicacao()));
+		}
+		if (!StringUtil.isNullOrEmpty(dto.getDataExposicao())) {
+			entity.setDataExposicao(this.dateFormat.parse(dto.getDataExposicao()));
+		}
+
+		dto.getAutorId().forEach(autorRequest -> {
+			Optional<Autor> out = this.buscarPorId(autorRequest);
+			if (out.isPresent()) {
+				entity.getAutor().add(out.get());
+			}			
+		});
+						
+		return entity;
+	}
+	*/
+	
+	/*
+	private void ValidaObra(ObraRequestDTO dto, BindingResult result) {
+		
+		boolean checkName = true;
+		
+		if (dto.getAutorId().isEmpty()) {
+			result.addError(new ObjectError("Autor", "Uma Obra deve possuir no mínimo um Autor. "));
+		}
+		
+		if (StringUtil.isNullOrEmpty(dto.getDataPublicacao()) && StringUtil.isNullOrEmpty(dto.getDataExposicao()) ) {
+			result.addError(new ObjectError("Datas", "DataPublicacao ou DataExposicao Devem ser preenchida. "));
+		}
+		
+		if (!StringUtil.isNullOrEmpty(dto.getDataPublicacao())) {
+			if (!DataUtil.isDateValid(dto.getDataPublicacao())) {
+				result.addError(new ObjectError("Datas", "DataPublicacao Inválida. "));
+			}
+		}
+		
+		if (!StringUtil.isNullOrEmpty(dto.getDataExposicao())) {
+			if (!DataUtil.isDateValid(dto.getDataExposicao())) {
+				result.addError(new ObjectError("Datas", "DataExposicao Inválida. "));
+			}
+		}
+		
+		// ================================
+		// Validando na edição 
+		// ================================
+		if (dto.getId().isPresent()) {
+			Optional<Obra> entity = this.obraService.buscarPorId(dto.getId().get());	
+			if (entity.isPresent()) {
+				if (entity.get().getNome().equalsIgnoreCase(dto.getNome())) {
+					checkName = false;
+				}				
+			}
+		}
+		
+		if (checkName) {
+			this.obraService.buscarPorNome(dto.getNome()).ifPresent(
+					e -> result.addError(new ObjectError("Nome", "Nome já existente. "))
+			);		
+		}
+		
+		return;
+	}
+	*/
 
 }

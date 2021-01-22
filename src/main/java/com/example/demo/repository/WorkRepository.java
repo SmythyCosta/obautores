@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.example.demo.models.Obra;
 
 
-public interface ObraRepository extends JpaRepository<Obra, Long>{
+public interface WorkRepository extends JpaRepository<Obra, Long>{
 	
 	Optional<Obra> findByNome(String nome);
 

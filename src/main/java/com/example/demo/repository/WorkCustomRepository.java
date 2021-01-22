@@ -13,11 +13,11 @@ import org.springframework.stereotype.Repository;
 import com.example.demo.models.Obra;
 
 @Repository
-public class ObraCustomRepository {
+public class WorkCustomRepository {
 
 	private final EntityManager em;
 	
-	public ObraCustomRepository(EntityManager em) {
+	public WorkCustomRepository(EntityManager em) {
         this.em = em;
     }
 	
