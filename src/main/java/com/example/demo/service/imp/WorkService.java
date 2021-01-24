@@ -68,9 +68,12 @@ public class WorkService implements IBaseService<Obra> {
 		this.rep.deleteById(id);		
 	}
 	
-	public Page<Obra> filtar(PageRequest pageRequest, String nome, String descricao) {
-		log.info("Buscando Obras Com Filtro Customizado{}");
-		return this.workCustomRepository.find(pageRequest, nome, descricao);
+	public Page<ObraResponseDTO> filtar(PageRequest pageRequest, String nome, String descricao) {
+		
+		log.info("Search Work's with filters {}");	
+		Page<Obra> woks = this.workCustomRepository.filter(pageRequest, nome, descricao);
+		Page<ObraResponseDTO> dto = woks.map(w -> this.parserToDTO(w));
+		return dto;
 	}
 	
 	private ObraResponseDTO parserToDTO(Obra entity) {

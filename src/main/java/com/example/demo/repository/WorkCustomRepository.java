@@ -1,5 +1,6 @@
 package com.example.demo.repository;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -22,25 +23,36 @@ public class WorkCustomRepository {
     }
 	
 	@SuppressWarnings("unchecked")
-	public Page<Obra> find(PageRequest pageRequest, String nome, String descricao) {
+	public Page<Obra> filter(PageRequest pageRequest, String nome, String descricao) {
 
-        StringBuilder query = new StringBuilder();
-        query.append("SELECT o FROM Obra o ");
         
+		StringBuilder query = new StringBuilder();
+        StringBuilder filter = new StringBuilder();
+        
+        
+        query.append("SELECT o FROM Obra o ");
+
         String condition = " WHERE ";
 
         if (nome != null) {
-            query.append(" " + condition + " o.nome LIKE :nome ");
+        	filter.append(" " + condition + " o.nome LIKE :nome ");
             condition = " AND ";
         }
 
         if (descricao != null) {
-            query.append(" " + condition + " o.descricao LIKE :descricao ");
+        	filter.append(" " + condition + " o.descricao LIKE :descricao ");
             condition = " AND ";
         }
-
+        
+        
+        query.append(filter);
+        query.append(" ORDER BY o.id ASC  ");
+        
+        
+        Query qCount = em.createNativeQuery("SELECT COUNT(o) FROM Obra o " + filter.toString());
         Query q = em.createQuery(query.toString(), Obra.class);
 
+        
         if (nome != null) {
             q.setParameter("nome", "%" + nome + "%");
         }
@@ -48,10 +60,13 @@ public class WorkCustomRepository {
         if (descricao != null) {
             q.setParameter("descricao", "%" + descricao + "%");
         }
-
-        List<Obra> resultObras = (List<Obra>) q.getResultList();        
-        Page<Obra> page = new PageImpl<>(resultObras, pageRequest, resultObras.size());
         
+        BigInteger totalObjetos = (BigInteger) qCount.getSingleResult();
+        List<Obra> resultObras = (List<Obra>) q.setFirstResult((int)pageRequest
+	        																.getOffset())
+																			.setMaxResults(pageRequest.getPageSize())
+																			.getResultList();
+        Page<Obra> page = new PageImpl<>(resultObras, pageRequest, totalObjetos.longValue());
         return page;
     }
 

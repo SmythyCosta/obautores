@@ -80,10 +80,10 @@ public class WorkControlle {
 	}
 	
 	
-	/**
-	@ApiOperation(value="filtrando Obras")
-	@GetMapping("/filtrarObras")
-    public ResponseEntity<Response<Page<ObraResponseDTO>>> filtraObra(  
+	
+	@ApiOperation(value="filter Works")
+	@GetMapping("/filter")
+    public ResponseEntity<Response<Page<ObraResponseDTO>>> filterWork(  
     		@RequestParam(value = "pag", defaultValue = "0") int pag,
 			@RequestParam(value = "ord", defaultValue = "id") String ord,
 			@RequestParam(value = "dir", defaultValue = "DESC") String dir,
@@ -95,13 +95,13 @@ public class WorkControlle {
 		PageRequest pageRequest = PageRequest.of(pag, this.qtdPorPagina, Sort.Direction.ASC, ord);
 		Response<Page<ObraResponseDTO>> response = new Response<Page<ObraResponseDTO>>();		
 		
-		Page<Obra> obras = this.obraService.filtar(pageRequest, nome, descicao);
-		Page<ObraResponseDTO> dto = obras.map(o -> this.parserToDTO(o));
+		Page<ObraResponseDTO> obrasDto = this.workService.filtar(pageRequest, nome, descicao);
 		
-		response.setData(dto);
+		response.setData(obrasDto);
 		return ResponseEntity.ok(response);
     }
 	
+	/**
 	@ApiOperation(value="Listar Obra Por ID")
 	@GetMapping(value = { "/{id}" })
 	public ResponseEntity<Response<ObraResponseDTO>> buscarObraPorId(@PathVariable long id) {
