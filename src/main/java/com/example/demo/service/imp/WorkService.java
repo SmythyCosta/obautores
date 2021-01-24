@@ -68,7 +68,7 @@ public class WorkService implements IBaseService<Obra> {
 		this.rep.deleteById(id);		
 	}
 	
-	public Page<ObraResponseDTO> filtar(PageRequest pageRequest, String nome, String descricao) {
+	public Page<ObraResponseDTO> filter(PageRequest pageRequest, String nome, String descricao) {
 		
 		log.info("Search Work's with filters {}");	
 		Page<Obra> woks = this.workCustomRepository.filter(pageRequest, nome, descricao);

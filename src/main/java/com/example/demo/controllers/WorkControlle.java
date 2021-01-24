@@ -63,7 +63,7 @@ public class WorkControlle {
 	
 	@ApiOperation(value="list Works")
 	@GetMapping(value = "/list")
-	public ResponseEntity<Response<Page<ObraResponseDTO>>> listarObras(
+	public ResponseEntity<Response<Page<ObraResponseDTO>>> listWorks(
 			@RequestParam(value = "pag", defaultValue = "0") int pag,
 			@RequestParam(value = "ord", defaultValue = "id") String ord,
 			@RequestParam(value = "dir", defaultValue = "DESC") String dir) {
@@ -79,8 +79,6 @@ public class WorkControlle {
 		return ResponseEntity.ok(response);
 	}
 	
-	
-	
 	@ApiOperation(value="filter Works")
 	@GetMapping("/filter")
     public ResponseEntity<Response<Page<ObraResponseDTO>>> filterWork(  
@@ -95,7 +93,7 @@ public class WorkControlle {
 		PageRequest pageRequest = PageRequest.of(pag, this.qtdPorPagina, Sort.Direction.ASC, ord);
 		Response<Page<ObraResponseDTO>> response = new Response<Page<ObraResponseDTO>>();		
 		
-		Page<ObraResponseDTO> obrasDto = this.workService.filtar(pageRequest, nome, descicao);
+		Page<ObraResponseDTO> obrasDto = this.workService.filter(pageRequest, nome, descicao);
 		
 		response.setData(obrasDto);
 		return ResponseEntity.ok(response);
