@@ -27,8 +27,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.dto.AutorDTO;
 import com.example.demo.dto.ObraRequestDTO;
 import com.example.demo.dto.ObraResponseDTO;
+import com.example.demo.exception.NotFoundException;
 import com.example.demo.models.Autor;
 import com.example.demo.models.Obra;
 import com.example.demo.response.Response;
@@ -98,6 +100,17 @@ public class WorkControlle {
 		response.setData(obrasDto);
 		return ResponseEntity.ok(response);
     }
+	
+	@ApiOperation(value="Search Work by ID")
+	@GetMapping(value = { "/{id}" })
+	public ResponseEntity<Response<ObraResponseDTO>> searchWorkById(@PathVariable("id") long id) throws NotFoundException {
+		
+		log.info("Search Work by ID: {}", id);
+		Response<ObraResponseDTO> response = new Response<ObraResponseDTO>();
+		response.setData(this.workService.searchById(id));
+		
+		return ResponseEntity.ok(response);
+	}
 	
 	/**
 	@ApiOperation(value="Listar Obra Por ID")
