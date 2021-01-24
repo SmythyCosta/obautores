@@ -14,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.dto.AutorDTO;
 import com.example.demo.dto.ObraRequestDTO;
 import com.example.demo.dto.ObraResponseDTO;
 import com.example.demo.exception.NotFoundException;
@@ -79,9 +80,10 @@ public class WorkService implements IBaseService<Obra> {
 	}
 
 	@Override
-	public void remover(Long id) {
+	public void remove(Long id) {
 		log.info("Removendo a Obra ID {}", id);
-		this.rep.deleteById(id);		
+		ObraResponseDTO dto = this.searchById(id);
+		this.rep.deleteById(dto.getId().get());		
 	}
 	
 	public Page<ObraResponseDTO> filter(PageRequest pageRequest, String nome, String descricao) {
