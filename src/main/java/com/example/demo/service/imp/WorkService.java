@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.ObraRequestDTO;
 import com.example.demo.dto.ObraResponseDTO;
+import com.example.demo.exception.NotFoundException;
+import com.example.demo.models.Autor;
 import com.example.demo.models.Obra;
 import com.example.demo.repository.WorkCustomRepository;
 import com.example.demo.repository.WorkRepository;
@@ -27,6 +30,9 @@ public class WorkService implements IBaseService<Obra> {
 	
 	private static final Logger log = LoggerFactory.getLogger(WorkService.class);
 	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	
+	@Value("${delimiter}")
+    private String delimiter;
 	
 	@Autowired
 	private WorkRepository rep;
@@ -51,9 +57,19 @@ public class WorkService implements IBaseService<Obra> {
 	}
 
 	@Override
-	public Optional<Obra> buscarPorId(Long id) {
-		log.info("Buscando uma Obra pelo ID {}", id);
-		return this.rep.findById(id);
+	public ObraResponseDTO searchById(Long id) {
+		log.info("Buscando um Obra pelo ID {}", id);
+
+		StringBuilder sb = new StringBuilder();
+		Optional<Obra> entity = this.rep.findById(id);
+
+		if (!entity.isPresent()) {
+			log.info("Obra não encontrado para o ID: {}", id);
+			sb.append("Obra não encontrado para o id " + id + this.delimiter);
+			throw new NotFoundException(sb.toString());
+		}
+		
+		return this.parserToDTO(entity.get());
 	}
 	
 	@Override
