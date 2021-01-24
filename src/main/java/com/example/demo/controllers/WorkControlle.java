@@ -112,6 +112,16 @@ public class WorkControlle extends BaseController {
 		return ResponseEntity.ok(response);
 	}
 	
+	
+	@ApiOperation(value="Delete Work By ID")
+	@DeleteMapping(value = "/{id}")
+	public ResponseEntity<Response<String>> deleteWork(@PathVariable("id") Long id) {
+		log.info("Deleting Work: {}", id);
+		this.workService.remove(id);
+		return ResponseEntity.ok(new Response<String>());		
+	}
+	
+	
 	/**
 	@ApiOperation(value="Listar Obra Por ID")
 	@GetMapping(value = { "/{id}" })
@@ -174,23 +184,7 @@ public class WorkControlle extends BaseController {
 		return ResponseEntity.ok(response);
 	}
 
-	@ApiOperation(value="Deletar Obra Por ID")
-	@DeleteMapping(value = "/{id}")
-	public ResponseEntity<Response<String>> deletarObra(@PathVariable("id") Long id) {
-		
-		log.info("Removendo Autor: {}", id);
-		Response<String> response = new Response<String>();
-		Optional<Obra> entity = this.obraService.buscarPorId(id);
-		
-		if (!entity.isPresent()) {
-			log.info("Erro ao remover Obra devido ID: {} ser inválido. ", id);
-			response.getErrors().add("Erro ao remover Obra. Registro não encontrado para o id " + id);
-			return ResponseEntity.badRequest().body(response);
-		}
-		
-		this.obraService.remover(id);
-		return ResponseEntity.ok(new Response<String>());		
-	}	
+	
 	
 	private Obra parserToEntity(ObraRequestDTO dto) throws ParseException {
 		

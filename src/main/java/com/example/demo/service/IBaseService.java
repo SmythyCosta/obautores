@@ -47,6 +47,6 @@ public interface IBaseService<T> {
 	 * 
 	 * @param id
 	 */
-	void remover(Long id);
+	void remove(Long id);
 
 }
