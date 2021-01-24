@@ -47,7 +47,7 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping(value="/api/works")
 @CrossOrigin(origins = "*")
 @Api(value="API ObraControlle")
-public class WorkControlle {
+public class WorkControlle extends BaseController {
 	
 	private static final Logger log = LoggerFactory.getLogger(WorkControlle.class);
 	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

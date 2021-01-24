@@ -32,7 +32,7 @@ public interface IBaseService<T> {
 	 * @param id
 	 * @return Optional<Entity>
 	 */
-	ObraResponseDTO buscarPorId(Long id);
+	ObraResponseDTO searchById(Long id);
 	
 	/**
 	 * Retorna um Obj por nome.
