@@ -62,10 +62,9 @@ public class WorkCustomRepository {
         }
         
         BigInteger totalObjetos = (BigInteger) qCount.getSingleResult();
-        List<Obra> resultObras = (List<Obra>) q.setFirstResult((int)pageRequest
-	        																.getOffset())
-																			.setMaxResults(pageRequest.getPageSize())
-																			.getResultList();
+        List<Obra> resultObras = (List<Obra>) q.setFirstResult((int)pageRequest.getOffset())
+																.setMaxResults(pageRequest.getPageSize())
+																.getResultList();
         Page<Obra> page = new PageImpl<>(resultObras, pageRequest, totalObjetos.longValue());
         return page;
     }
