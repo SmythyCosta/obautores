@@ -44,6 +44,9 @@ public class WorkService implements IBaseService<Obra> {
 	
 	@Autowired
 	private WorkCustomRepository workCustomRepository;
+	
+	@Autowired
+	private ActorService actorService;
 
 	@Override
 	public Page<ObraResponseDTO> listarTodos(PageRequest pageRequest) {
@@ -57,10 +60,6 @@ public class WorkService implements IBaseService<Obra> {
 
 	@Override
 	public ObraResponseDTO persistir(ObraRequestDTO dto, BindingResult result) {
-		log.info("Persistindo Obra: {}", t);
-		return this.rep.save(t);
-		
-		
 		
 		log.info("criando nova abra: {}", dto.toString());
 		
@@ -141,7 +140,7 @@ public class WorkService implements IBaseService<Obra> {
 		return dto;
 	}
 	
-	/*
+	
 	private Obra parserToEntity(ObraRequestDTO dto) throws ParseException {
 		
 		Obra entity = new Obra();
@@ -168,7 +167,7 @@ public class WorkService implements IBaseService<Obra> {
 						
 		return entity;
 	}
-	*/
+	
 	
 	
 	private void ValidaObra(ObraRequestDTO dto, BindingResult result) {

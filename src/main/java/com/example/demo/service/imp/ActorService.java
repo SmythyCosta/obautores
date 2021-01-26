@@ -76,12 +76,12 @@ public class ActorService implements IAutorService<Autor> {
 	@Override
 	public void remover(Long id) {
 		log.info("Removendo o Autor ID {}", id);
-		AutorDTO entity = this.buscarPorId(id);
+		AutorDTO entity = this.buscarPorIdWithException(id);
 		this.repository.deleteById(entity.getId().get());
 	}
 
 	@Override
-	public AutorDTO buscarPorId(Long id) throws NotFoundException {
+	public AutorDTO buscarPorIdWithException(Long id) throws NotFoundException {
 		log.info("Buscando um Autor pelo ID {}", id);
 
 		StringBuilder sb = new StringBuilder();
@@ -172,7 +172,7 @@ public class ActorService implements IAutorService<Autor> {
 		// ================================
 		if (objDTO.getId().isPresent()) {
 				
-			AutorDTO entity = this.buscarPorId(objDTO.getId().get());	
+			AutorDTO entity = this.buscarPorIdWithException(objDTO.getId().get());	
 			if (entity != null) {
 				if (entity.getEmail().equalsIgnoreCase(objDTO.getEmail())) {
 					checkEmail = false;

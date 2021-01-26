@@ -39,7 +39,7 @@ public interface IAutorService<T> {
 	 * @throws javassist.NotFoundException
 	 * @throws BusinessException 
 	 */
-	AutorDTO buscarPorId(Long id) throws NotFoundException;
+	AutorDTO buscarPorIdWithException(Long id) throws NotFoundException;
 	
 	/**
 	 * Retorna um Obj por nome.

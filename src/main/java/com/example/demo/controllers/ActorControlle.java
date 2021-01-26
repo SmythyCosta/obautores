@@ -95,7 +95,7 @@ public class ActorControlle extends BaseController {
 		
 		log.info("Search Actor by ID: {}", id);
 		Response<AutorDTO> response = new Response<AutorDTO>();
-		response.setData(this.actorService.buscarPorId(id));
+		response.setData(this.actorService.buscarPorIdWithException(id));
 		
 		return ResponseEntity.ok(response);
 	}

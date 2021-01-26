@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.validation.BindingResult;
 
+import com.example.demo.dto.ObraRequestDTO;
 import com.example.demo.dto.ObraResponseDTO;
 
 public interface IBaseService<T> {
@@ -24,7 +25,7 @@ public interface IBaseService<T> {
 	 * @param id
 	 * @return Obj
 	 */
-	ObraResponseDTO persistir(ObraResponseDTO dto, BindingResult result);
+	ObraResponseDTO persistir(ObraRequestDTO dto, BindingResult result);
 	
 	
 	/**
