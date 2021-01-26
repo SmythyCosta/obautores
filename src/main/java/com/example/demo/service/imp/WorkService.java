@@ -63,7 +63,7 @@ public class WorkService implements IBaseService<Obra> {
 		
 		log.info("criando nova abra: {}", dto.toString());
 		
-		ValidaObra(dto, result);
+		validateWork(dto, result);
 		StringBuilder sb = new StringBuilder();
 		
 		if (result.hasErrors()) {
@@ -169,7 +169,7 @@ public class WorkService implements IBaseService<Obra> {
 	
 	
 	
-	private void ValidaObra(ObraRequestDTO dto, BindingResult result) {
+	private void validateWork(ObraRequestDTO dto, BindingResult result) {
 		
 		boolean checkName = true;
 		
