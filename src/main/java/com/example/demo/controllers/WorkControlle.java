@@ -101,13 +101,25 @@ public class WorkControlle extends BaseController {
 		return ResponseEntity.ok(response);
     }
 	
+	@ApiOperation(value="Criar nova Obra")
+	@PostMapping()
+	public ResponseEntity<Response<ObraResponseDTO>> criarNovaObra(@Valid @RequestBody ObraRequestDTO dto, BindingResult result) throws ParseException  {
+		
+		log.info("criando nova abra: {}", dto.toString());
+		Response<ObraResponseDTO> response = new Response<ObraResponseDTO>();
+				
+		ObraResponseDTO work = this.workService.persistir(dto, result);
+		response.setData(work);
+		return ResponseEntity.ok(response);
+	}
+	
 	@ApiOperation(value="Search Work by ID")
 	@GetMapping(value = { "/{id}" })
 	public ResponseEntity<Response<ObraResponseDTO>> searchWorkById(@PathVariable("id") long id) throws NotFoundException {
 		
 		log.info("Search Work by ID: {}", id);
 		Response<ObraResponseDTO> response = new Response<ObraResponseDTO>();
-		response.setData(this.workService.searchById(id));
+		response.setData(this.workService.searchByIdWithException(id));
 		
 		return ResponseEntity.ok(response);
 	}
@@ -141,26 +153,7 @@ public class WorkControlle extends BaseController {
 		return ResponseEntity.ok(response);		
 	}
 	
-	@ApiOperation(value="Criar nova Obra")
-	@PostMapping()
-	public ResponseEntity<Response<ObraResponseDTO>> criarNovaObra(@Valid @RequestBody ObraRequestDTO dto, BindingResult result) throws ParseException  {
-		
-		log.info("criando nova abra: {}", dto.toString());
-		Response<ObraResponseDTO> response = new Response<ObraResponseDTO>();
-		
-		ValidaObra(dto, result);
-		
-		if (result.hasErrors()) {
-			log.error("Erro validando Obra: {}", result.getAllErrors());
-			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
-			return ResponseEntity.badRequest().body(response);
-		}
-		
-		Obra obra = this.parserToEntity(dto);
-		
-		response.setData(this.parserToDTO(this.obraService.persistir(obra)));
-		return ResponseEntity.ok(response);
-	}
+	
 	
 	@ApiOperation(value="Alterar Obra por ID")
 	@PutMapping(value = "/{id}")
