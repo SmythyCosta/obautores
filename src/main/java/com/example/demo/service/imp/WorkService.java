@@ -59,7 +59,7 @@ public class WorkService implements IBaseService<Obra> {
 	}
 
 	@Override
-	public ObraResponseDTO persistir(ObraRequestDTO dto, BindingResult result) {
+	public ObraResponseDTO persistir(ObraRequestDTO dto, BindingResult result) throws ParseException {
 		
 		log.info("criando nova abra: {}", dto.toString());
 		
@@ -73,9 +73,8 @@ public class WorkService implements IBaseService<Obra> {
 			throw new BusinessException(sb.toString());
 		}
 		
-		
 		Obra obra = this.parserToEntity(dto, result);
-		return this.parserToDTO(this.repository.save(obra));
+		return this.parserToDTO(this.rep.save(obra));
 	
 	}
 
@@ -141,7 +140,7 @@ public class WorkService implements IBaseService<Obra> {
 	}
 	
 	
-	private Obra parserToEntity(ObraRequestDTO dto) throws ParseException {
+	private Obra parserToEntity(ObraRequestDTO dto, BindingResult result) throws ParseException {
 		
 		Obra entity = new Obra();
 		

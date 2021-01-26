@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import java.text.ParseException;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -25,7 +26,7 @@ public interface IBaseService<T> {
 	 * @param id
 	 * @return Obj
 	 */
-	ObraResponseDTO persistir(ObraRequestDTO dto, BindingResult result);
+	ObraResponseDTO persistir(ObraRequestDTO dto, BindingResult result) throws ParseException;
 	
 	
 	/**
