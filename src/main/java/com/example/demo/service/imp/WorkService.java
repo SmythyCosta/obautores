@@ -13,10 +13,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 
 import com.example.demo.dto.AutorDTO;
 import com.example.demo.dto.ObraRequestDTO;
 import com.example.demo.dto.ObraResponseDTO;
+import com.example.demo.exception.BusinessException;
 import com.example.demo.exception.NotFoundException;
 import com.example.demo.models.Autor;
 import com.example.demo.models.Obra;
@@ -24,6 +27,7 @@ import com.example.demo.repository.WorkCustomRepository;
 import com.example.demo.repository.WorkRepository;
 import com.example.demo.response.Response;
 import com.example.demo.service.IBaseService;
+import com.example.demo.util.DataUtil;
 import com.example.demo.util.StringUtil;
 
 @Service
@@ -52,13 +56,32 @@ public class WorkService implements IBaseService<Obra> {
 	}
 
 	@Override
-	public Obra persistir(Obra t) {
+	public ObraResponseDTO persistir(ObraRequestDTO dto, BindingResult result) {
 		log.info("Persistindo Obra: {}", t);
 		return this.rep.save(t);
+		
+		
+		
+		log.info("criando nova abra: {}", dto.toString());
+		
+		ValidaObra(dto, result);
+		StringBuilder sb = new StringBuilder();
+		
+		if (result.hasErrors()) {
+			log.error("Erro validando Obra: {}", result.getAllErrors());
+			result.getAllErrors()
+					.forEach(error -> sb.append(error.getDefaultMessage() + this.delimiter));
+			throw new BusinessException(sb.toString());
+		}
+		
+		
+		Obra obra = this.parserToEntity(dto, result);
+		return this.parserToDTO(this.repository.save(obra));
+	
 	}
 
 	@Override
-	public ObraResponseDTO searchById(Long id) {
+	public ObraResponseDTO searchByIdWithException(Long id) {   
 		log.info("Buscando um Obra pelo ID {}", id);
 
 		StringBuilder sb = new StringBuilder();
@@ -73,6 +96,11 @@ public class WorkService implements IBaseService<Obra> {
 		return this.parserToDTO(entity.get());
 	}
 	
+	public Optional<Obra> searchById(Long id) {
+		log.info("Buscando um Obra pelo ID {}", id);
+		return this.rep.findById(id);
+	}
+	
 	@Override
 	public Optional<Obra> buscarPorNome(String nome) {
 		log.info("Buscando uma Obra pelo nome {}", nome);
@@ -82,7 +110,7 @@ public class WorkService implements IBaseService<Obra> {
 	@Override
 	public void remove(Long id) {
 		log.info("Removendo a Obra ID {}", id);
-		ObraResponseDTO dto = this.searchById(id);
+		ObraResponseDTO dto = this.searchByIdWithException(id);
 		this.rep.deleteById(dto.getId().get());		
 	}
 	
@@ -142,7 +170,7 @@ public class WorkService implements IBaseService<Obra> {
 	}
 	*/
 	
-	/*
+	
 	private void ValidaObra(ObraRequestDTO dto, BindingResult result) {
 		
 		boolean checkName = true;
@@ -171,7 +199,7 @@ public class WorkService implements IBaseService<Obra> {
 		// Validando na edição 
 		// ================================
 		if (dto.getId().isPresent()) {
-			Optional<Obra> entity = this.obraService.buscarPorId(dto.getId().get());	
+			Optional<Obra> entity = this.searchById(dto.getId().get());
 			if (entity.isPresent()) {
 				if (entity.get().getNome().equalsIgnoreCase(dto.getNome())) {
 					checkName = false;
@@ -180,13 +208,13 @@ public class WorkService implements IBaseService<Obra> {
 		}
 		
 		if (checkName) {
-			this.obraService.buscarPorNome(dto.getNome()).ifPresent(
+			this.buscarPorNome(dto.getNome()).ifPresent(
 					e -> result.addError(new ObjectError("Nome", "Nome já existente. "))
 			);		
 		}
 		
 		return;
 	}
-	*/
+	
 
 }

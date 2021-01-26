@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.validation.BindingResult;
 
 import com.example.demo.dto.ObraResponseDTO;
 
@@ -23,7 +24,7 @@ public interface IBaseService<T> {
 	 * @param id
 	 * @return Obj
 	 */
-	T persistir(T t);
+	ObraResponseDTO persistir(ObraResponseDTO dto, BindingResult result);
 	
 	
 	/**
@@ -32,7 +33,7 @@ public interface IBaseService<T> {
 	 * @param id
 	 * @return Optional<Entity>
 	 */
-	ObraResponseDTO searchById(Long id);
+	ObraResponseDTO searchByIdWithException(Long id);
 	
 	/**
 	 * Retorna um Obj por nome.
