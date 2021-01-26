@@ -159,7 +159,7 @@ public class WorkService implements IBaseService<Obra> {
 		}
 
 		dto.getAutorId().forEach(autorRequest -> {
-			Optional<Autor> out = this.buscarPorId(autorRequest);
+			Optional<Autor> out = this.actorService.buscarPorId(autorRequest);
 			if (out.isPresent()) {
 				entity.getAutor().add(out.get());
 			}			

@@ -96,6 +96,11 @@ public class ActorService implements IAutorService<Autor> {
 		return this.parserToDTO(entity.get());
 	}
 	
+	public Optional<Autor> buscarPorId(Long id) throws NotFoundException {
+		log.info("Buscando um Autor pelo ID {}", id);
+		return this.repository.findById(id);
+	}
+	
 	@Override
 	public Optional<Autor> buscarPorNome(String nome) {
 		log.info("Buscando um Autor pelo nome {}", nome);
