@@ -10,8 +10,9 @@ import org.springframework.validation.BindingResult;
 import com.example.demo.dto.AutorDTO;
 import com.example.demo.exception.BusinessException;
 import com.example.demo.exception.NotFoundException;
+import com.example.demo.models.Autor;
 
-public interface IAutorService<T> {
+public interface IAutorService {
 
 	/**
 	 * Retorna uma lista paginada.
@@ -47,7 +48,7 @@ public interface IAutorService<T> {
 	 * @param nome
 	 * @return Optional<Entity>
 	 */
-	Optional<T> buscarPorNome(String nome);
+	Optional<Autor> buscarPorNome(String nome);
 	
 	/**
 	 * Deleta um Obj base de dados.

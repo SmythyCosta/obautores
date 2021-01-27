@@ -9,8 +9,9 @@ import org.springframework.validation.BindingResult;
 
 import com.example.demo.dto.ObraRequestDTO;
 import com.example.demo.dto.ObraResponseDTO;
+import com.example.demo.models.Obra;
 
-public interface IBaseService<T> {
+public interface IWorkService {
 
 	/**
 	 * Retorna uma lista paginada.
@@ -43,7 +44,7 @@ public interface IBaseService<T> {
 	 * @param nome
 	 * @return Optional<Entity>
 	 */
-	Optional<T> buscarPorNome(String nome);
+	Optional<Obra> buscarPorNome(String nome);
 	
 	/**
 	 * Deleta um Obj base de dados.

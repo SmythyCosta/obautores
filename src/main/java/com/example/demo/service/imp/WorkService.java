@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 
+import com.example.demo.service.IWorkService;
 import com.example.demo.dto.ObraRequestDTO;
 import com.example.demo.dto.ObraResponseDTO;
 import com.example.demo.exception.BusinessException;
@@ -22,12 +23,11 @@ import com.example.demo.models.Autor;
 import com.example.demo.models.Obra;
 import com.example.demo.repository.WorkCustomRepository;
 import com.example.demo.repository.WorkRepository;
-import com.example.demo.service.IBaseService;
 import com.example.demo.util.DataUtil;
 import com.example.demo.util.StringUtil;
 
 @Service
-public class WorkService implements IBaseService<Obra> {
+public class WorkService implements IWorkService {
 	
 	private static final Logger log = LoggerFactory.getLogger(WorkService.class);
 	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
