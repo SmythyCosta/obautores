@@ -70,7 +70,7 @@ public class WorkControlle extends BaseController {
 			@RequestParam(value = "ord", defaultValue = "id") String ord,
 			@RequestParam(value = "dir", defaultValue = "DESC") String dir) {
 		
-		log.info("Listagem de Obra, página: {}", pag);
+		log.info("Work Listing, página: {}", pag);
 		
 		Response<Page<ObraResponseDTO>> response = new Response<Page<ObraResponseDTO>>();
 		PageRequest pageRequest = PageRequest.of(pag, this.qtdPorPagina, Sort.Direction.ASC, ord);
@@ -91,7 +91,7 @@ public class WorkControlle extends BaseController {
             @RequestParam(value = "descicao", required = false) String descicao
     ) {
 		
-		log.info("Filtro de Obra => nome: " + nome + " descrição: " + descicao + "");
+		log.info("Work Filter => nome: " + nome + " descrição: " + descicao + "");
 		PageRequest pageRequest = PageRequest.of(pag, this.qtdPorPagina, Sort.Direction.ASC, ord);
 		Response<Page<ObraResponseDTO>> response = new Response<Page<ObraResponseDTO>>();		
 		
@@ -101,11 +101,11 @@ public class WorkControlle extends BaseController {
 		return ResponseEntity.ok(response);
     }
 	
-	@ApiOperation(value="Criar nova Obra")
+	@ApiOperation(value="Create new Work")
 	@PostMapping()
 	public ResponseEntity<Response<ObraResponseDTO>> criarNovaObra(@Valid @RequestBody ObraRequestDTO dto, BindingResult result) throws ParseException  {
 		
-		log.info("criando nova abra: {}", dto.toString());
+		log.info("creating new Work: {}", dto.toString());
 		Response<ObraResponseDTO> response = new Response<ObraResponseDTO>();
 				
 		ObraResponseDTO work = this.workService.persistir(dto, result);
@@ -145,123 +145,5 @@ public class WorkControlle extends BaseController {
 		this.workService.remove(id);
 		return ResponseEntity.ok(new Response<String>());		
 	}
-	
-	
-	/**
-	@ApiOperation(value="Listar Obra Por ID")
-	@GetMapping(value = { "/{id}" })
-	public ResponseEntity<Response<ObraResponseDTO>> buscarObraPorId(@PathVariable long id) {
-		
-		log.info("Buscando Autor por ID: {}", id);
-		Response<ObraResponseDTO> response = new Response<ObraResponseDTO>();
-		Optional<Obra> entity = this.obraService.buscarPorId(id);
-		
-		if (!entity.isPresent()) {			
-			log.info("Obra não encontrado para o ID: {}", id);
-			response.getErrors().add("Obra não encontrado para o id " + id);
-			return ResponseEntity.badRequest().body(response);
-		}
-		
-		response.setData(this.parserToDTO(entity.get()));
-		return ResponseEntity.ok(response);		
-	}
-	
-	
-	
-	
-
-	
-	
-	private Obra parserToEntity(ObraRequestDTO dto) throws ParseException {
-		
-		Obra entity = new Obra();
-		
-		if (dto.getId().isPresent()) {		
-			entity.setId(dto.getId().get());
-		}
-		entity.setNome(dto.getNome());
-		entity.setDescricao(dto.getDescricao());
-		entity.setImagem(dto.getImagem());		
-		if (!StringUtil.isNullOrEmpty(dto.getDataPublicacao())) {
-			entity.setDataPublicacao(this.dateFormat.parse(dto.getDataPublicacao()));
-		}
-		if (!StringUtil.isNullOrEmpty(dto.getDataExposicao())) {
-			entity.setDataExposicao(this.dateFormat.parse(dto.getDataExposicao()));
-		}
-
-		dto.getAutorId().forEach(autorRequest -> {
-			Optional<Autor> out = autorService.buscarPorId(autorRequest);
-			if (out.isPresent()) {
-				entity.getAutor().add(out.get());
-			}			
-		});
-						
-		return entity;
-	}
-	
-	private ObraResponseDTO parserToDTO(Obra entity) {
-		
-		ObraResponseDTO dto = new ObraResponseDTO();
-		
-		dto.setId(Optional.of(entity.getId()));
-		dto.setNome(entity.getNome());
-		dto.setDescricao(entity.getDescricao());
-		dto.setImagem(entity.getImagem());		
-		if (entity.getDataPublicacao() != null) {
-			dto.setDataPublicacao(this.dateFormat.format(entity.getDataPublicacao()));
-		}
-		if (entity.getDataExposicao() != null) {
-			dto.setDataExposicao(this.dateFormat.format(entity.getDataExposicao()));
-		}
-		dto.getAutor().addAll(entity.getAutor());
-
-		return dto;
-	}
-	
-	private void ValidaObra(ObraRequestDTO dto, BindingResult result) {
-		
-		boolean checkName = true;
-		
-		if (dto.getAutorId().isEmpty()) {
-			result.addError(new ObjectError("Autor", "Uma Obra deve possuir no mínimo um Autor. "));
-		}
-		
-		if (StringUtil.isNullOrEmpty(dto.getDataPublicacao()) && StringUtil.isNullOrEmpty(dto.getDataExposicao()) ) {
-			result.addError(new ObjectError("Datas", "DataPublicacao ou DataExposicao Devem ser preenchida. "));
-		}
-		
-		if (!StringUtil.isNullOrEmpty(dto.getDataPublicacao())) {
-			if (!DataUtil.isDateValid(dto.getDataPublicacao())) {
-				result.addError(new ObjectError("Datas", "DataPublicacao Inválida. "));
-			}
-		}
-		
-		if (!StringUtil.isNullOrEmpty(dto.getDataExposicao())) {
-			if (!DataUtil.isDateValid(dto.getDataExposicao())) {
-				result.addError(new ObjectError("Datas", "DataExposicao Inválida. "));
-			}
-		}
-		
-		// ================================
-		// Validando na edição 
-		// ================================
-		if (dto.getId().isPresent()) {
-			Optional<Obra> entity = this.obraService.buscarPorId(dto.getId().get());	
-			if (entity.isPresent()) {
-				if (entity.get().getNome().equalsIgnoreCase(dto.getNome())) {
-					checkName = false;
-				}				
-			}
-		}
-		
-		if (checkName) {
-			this.obraService.buscarPorNome(dto.getNome()).ifPresent(
-					e -> result.addError(new ObjectError("Nome", "Nome já existente. "))
-			);		
-		}
-		
-		return;
-	}
-	*/
 	
 }
