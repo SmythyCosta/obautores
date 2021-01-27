@@ -1,7 +1,6 @@
 package com.example.demo.controllers;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -15,7 +14,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,17 +25,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.dto.AutorDTO;
 import com.example.demo.dto.ObraRequestDTO;
 import com.example.demo.dto.ObraResponseDTO;
 import com.example.demo.exception.NotFoundException;
-import com.example.demo.models.Autor;
-import com.example.demo.models.Obra;
 import com.example.demo.response.Response;
-import com.example.demo.service.imp.ActorService;
 import com.example.demo.service.imp.WorkService;
-import com.example.demo.util.DataUtil;
-import com.example.demo.util.StringUtil;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -50,18 +42,12 @@ import io.swagger.annotations.ApiOperation;
 public class WorkControlle extends BaseController {
 	
 	private static final Logger log = LoggerFactory.getLogger(WorkControlle.class);
-	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	@Autowired
 	private WorkService workService;
 	
-	@Autowired
-	private ActorService actorService;
-	
 	@Value("${paginacao.quantityPerPage}")
 	private int qtdPorPagina;
-	
-	
 	
 	@ApiOperation(value="list Works")
 	@GetMapping(value = "/list")
