@@ -113,6 +113,19 @@ public class WorkControlle extends BaseController {
 		return ResponseEntity.ok(response);
 	}
 	
+	@ApiOperation(value="Update Work by Id")
+	@PutMapping(value = "/{id}")
+	public ResponseEntity<Response<ObraResponseDTO>> updateWork(@PathVariable long id, @Valid @RequestBody ObraRequestDTO dto, BindingResult result) throws ParseException {
+	
+		log.info("Updating Work: {}", dto.toString());
+		Response<ObraResponseDTO> response = new Response<ObraResponseDTO>();
+		
+		dto.setId(Optional.of(id));			
+		response.setData(this.workService.persistir(dto, result));
+		
+		return ResponseEntity.ok(response);
+	}
+	
 	@ApiOperation(value="Search Work by ID")
 	@GetMapping(value = { "/{id}" })
 	public ResponseEntity<Response<ObraResponseDTO>> searchWorkById(@PathVariable("id") long id) throws NotFoundException {
@@ -155,27 +168,7 @@ public class WorkControlle extends BaseController {
 	
 	
 	
-	@ApiOperation(value="Alterar Obra por ID")
-	@PutMapping(value = "/{id}")
-	public ResponseEntity<Response<ObraResponseDTO>> atualizaObra(@PathVariable long id, @Valid @RequestBody ObraRequestDTO dto, BindingResult result) throws ParseException {
 	
-		log.info("Atualizando Obra: {}", dto.toString());
-		Response<ObraResponseDTO> response = new Response<ObraResponseDTO>();
-		
-		dto.setId(Optional.of(id));		
-		ValidaObra(dto, result);
-
-		if (result.hasErrors()) {
-			log.error("Erro validando Obra: {}", result.getAllErrors());
-			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
-			return ResponseEntity.badRequest().body(response);
-		}
-		
-		Obra entity = this.parserToEntity(dto);
-		
-		response.setData(this.parserToDTO(this.obraService.persistir(entity)));
-		return ResponseEntity.ok(response);
-	}
 
 	
 	
