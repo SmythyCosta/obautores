@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +27,9 @@ import com.example.demo.enums.SexoEnum;
 import com.example.demo.exception.BusinessException;
 import com.example.demo.exception.NotFoundException;
 import com.example.demo.models.Autor;
+import com.example.demo.models.Obra;
 import com.example.demo.repository.AutorRepository;
+import com.example.demo.repository.WorkRepository;
 import com.example.demo.response.Response;
 import com.example.demo.service.IAutorService;
 import com.example.demo.util.CpfUtil;
@@ -44,7 +47,10 @@ public class ActorService implements IAutorService {
 	
 	@Autowired
 	private AutorRepository repository;
-
+	
+	@Autowired
+	WorkRepository workRepository;
+	
 	@Override
 	public Page<AutorDTO> listarTodos(PageRequest pageRequest) {
 		
@@ -118,7 +124,14 @@ public class ActorService implements IAutorService {
 
 	public List<Autor> buscarAutoresPorObra(Long idObra){
 		log.info("Buscando Autores pelo ID Obra {}", idObra);
-		return this.repository.findAutoresByIdObra (idObra);
+		
+		Optional<Obra> obra = this.workRepository.findById(idObra);
+		if (!obra.isPresent()) {
+			log.info("Obra não encontrado para o ID: {}", idObra);
+			throw new NotFoundException("Obra não encontrado");
+		}
+		
+		return obra.get().getAutor();
 	}
 
 	private Autor parserToEntity(AutorDTO dto, BindingResult result) throws ParseException {
