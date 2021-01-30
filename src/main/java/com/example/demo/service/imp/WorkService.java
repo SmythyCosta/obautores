@@ -111,7 +111,7 @@ public class WorkService implements IWorkService {
 	public Page<ObraResponseDTO> filter(PageRequest pageRequest, String nome, String descricao) {
 		
 		log.info("Search Work's with filters {}");	
-		Page<Obra> woks = this.workCustomRepository.filter(pageRequest, nome, descricao);
+		Page<Obra> woks = this.workCustomRepository.filterObject(pageRequest, nome, descricao);
 		Page<ObraResponseDTO> dto = woks.map(w -> this.parserToDTO(w));
 		return dto;
 	}

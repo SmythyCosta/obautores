@@ -38,7 +38,7 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping(value="/api/works")
 @CrossOrigin(origins = "*")
-@Api(value="API ObraControlle")
+@Api(value="Work API")
 public class WorkControlle extends BaseControllerException {
 	
 	private static final Logger log = LoggerFactory.getLogger(WorkControlle.class);
