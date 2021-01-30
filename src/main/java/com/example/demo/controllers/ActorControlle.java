@@ -38,7 +38,7 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping(value="/api/actors")
 @CrossOrigin(origins = "*")
 @Api(value="Actor API")
-public class ActorControlle extends BaseController {
+public class ActorControlle extends BaseControllerException {
 	
 	private static final Logger log = LoggerFactory.getLogger(ActorControlle.class);
 	

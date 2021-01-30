@@ -6,6 +6,6 @@ import org.springframework.stereotype.Component;
 @Component
 public interface IHandlerBusinessException {
 
-    ResponseEntity<?> handlerBusinessException(BusinessException e);
+    ResponseEntity<?> handle(BusinessException e);
 
 }

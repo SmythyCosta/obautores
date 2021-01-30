@@ -19,7 +19,7 @@ public class HandlerBusinessException implements IHandlerBusinessException {
 	@Value("${delimiter}")
     private String delimiter;
 
-	public ResponseEntity<?> handlerBusinessException(BusinessException e) {
+	public ResponseEntity<?> handle(BusinessException e) {
 		
 		String errorMessegesFull = e.getMessage();
 		emptyErrorMessegeRespose();
@@ -29,7 +29,7 @@ public class HandlerBusinessException implements IHandlerBusinessException {
 			processErrorMessegeResponse(errorMessegesFull, qtd);
 		}
 
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessegeRespose);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(this.errorMessegeRespose);
     }
     
     private boolean checkDelimiter(String erros) {
