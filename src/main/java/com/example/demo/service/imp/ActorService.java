@@ -69,8 +69,7 @@ public class ActorService implements IAutorService {
 			throw new BusinessException(sb.toString());
 		}
 		
-		Autor autor = this.parserToEntity(objDTO, result);
-		return this.parserToDTO(this.repository.save(autor));
+		return this.parserToDTO(this.repository.save(this.parserToEntity(objDTO, result)));
 	}
 
 	@Override
@@ -156,10 +155,8 @@ public class ActorService implements IAutorService {
 		boolean checkCPF = true;
 		boolean checkNome = true;
 		
-		if (!"".equals(objDTO.getEmail().trim())) {
-			if (EmailUtil.isValidEmail(objDTO.getEmail())) {
-				result.addError(new ObjectError("Email", "Email inválido. "));
-			}
+		if (!"".equals(objDTO.getEmail().trim()) && EmailUtil.isValidEmail(objDTO.getEmail())) {
+			result.addError(new ObjectError("Email", "Email inválido. "));
 		}
 		
 		if (objDTO.getPaisOrigem().equalsIgnoreCase(PaisEnum.BRASIL.toString())) {
@@ -191,10 +188,8 @@ public class ActorService implements IAutorService {
 			}
 		}
 		
-		if (objDTO.getDataNascimento() != null) {
-			if (!DataUtil.isDateValid(objDTO.getDataNascimento())) {
+		if (objDTO.getDataNascimento() != null && !DataUtil.isDateValid(objDTO.getDataNascimento())) {
 				result.addError(new ObjectError("Datas", "DataNascimento Inválida. "));
-			}
 		}
 				
 		if (checkEmail) {
@@ -218,8 +213,7 @@ public class ActorService implements IAutorService {
 		if (!EnumUtils.isValidEnum(SexoEnum.class, objDTO.getSexo())) {
 			result.addError(new ObjectError("sexo", "Tipo de sexo inválido. "));
 		}
-				
-		return;
+
 	}
 
 }

@@ -76,6 +76,17 @@ public class ActorControlle extends BaseController {
 		return ResponseEntity.ok(response);
 	}
 	
+	@ApiOperation(value="Search Actor by ID")
+	@GetMapping(value = { "/{id}" })
+	public ResponseEntity<Response<AutorDTO>> searchActorById(@PathVariable("id") long id) throws NotFoundException {
+		
+		log.info("Search Actor by ID: {}", id);
+		Response<AutorDTO> response = new Response<AutorDTO>();
+		response.setData(this.actorService.buscarPorIdWithException(id));
+		
+		return ResponseEntity.ok(response);
+	}
+	
 	@ApiOperation(value="Update Actor by ID")
 	@PutMapping(value = "/{id}")
 	public ResponseEntity<Response<AutorDTO>> updateActor(@PathVariable long id, @Valid @RequestBody AutorDTO dto, BindingResult result) 
@@ -86,17 +97,6 @@ public class ActorControlle extends BaseController {
 		
 		dto.setId(Optional.of(id));
 		response.setData(this.actorService.persistir(dto, result)); 
-		return ResponseEntity.ok(response);
-	}
-	
-	@ApiOperation(value="Search Actor by ID")
-	@GetMapping(value = { "/{id}" })
-	public ResponseEntity<Response<AutorDTO>> searchActorById(@PathVariable("id") long id) throws NotFoundException {
-		
-		log.info("Search Actor by ID: {}", id);
-		Response<AutorDTO> response = new Response<AutorDTO>();
-		response.setData(this.actorService.buscarPorIdWithException(id));
-		
 		return ResponseEntity.ok(response);
 	}
 	
