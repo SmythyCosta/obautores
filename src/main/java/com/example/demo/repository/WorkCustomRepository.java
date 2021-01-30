@@ -59,10 +59,12 @@ public class WorkCustomRepository {
         
         if (nome != null) {
             q.setParameter("nome", "%" + nome + "%");
+            qCount.setParameter("nome", "%" + nome + "%");
         }
 
         if (descricao != null) {
             q.setParameter("descricao", "%" + descricao + "%");
+            qCount.setParameter("descricao", "%" + descricao + "%");
         }
         
         BigInteger totalObjetos = (BigInteger) qCount.getSingleResult();
