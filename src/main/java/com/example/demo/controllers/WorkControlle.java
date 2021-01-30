@@ -99,6 +99,17 @@ public class WorkControlle extends BaseControllerException {
 		return ResponseEntity.ok(response);
 	}
 	
+	@ApiOperation(value="Search Work by ID")
+	@GetMapping(value = { "/{id}" })
+	public ResponseEntity<Response<ObraResponseDTO>> searchWorkById(@PathVariable("id") long id) throws NotFoundException {
+		
+		log.info("Search Work by ID: {}", id);
+		Response<ObraResponseDTO> response = new Response<ObraResponseDTO>();
+		response.setData(this.workService.searchByIdWithException(id));
+		
+		return ResponseEntity.ok(response);
+	}
+	
 	@ApiOperation(value="Update Work by Id")
 	@PutMapping(value = "/{id}")
 	public ResponseEntity<Response<ObraResponseDTO>> updateWork(@PathVariable long id, @Valid @RequestBody ObraRequestDTO dto, BindingResult result) throws ParseException {
@@ -111,18 +122,6 @@ public class WorkControlle extends BaseControllerException {
 		
 		return ResponseEntity.ok(response);
 	}
-	
-	@ApiOperation(value="Search Work by ID")
-	@GetMapping(value = { "/{id}" })
-	public ResponseEntity<Response<ObraResponseDTO>> searchWorkById(@PathVariable("id") long id) throws NotFoundException {
-		
-		log.info("Search Work by ID: {}", id);
-		Response<ObraResponseDTO> response = new Response<ObraResponseDTO>();
-		response.setData(this.workService.searchByIdWithException(id));
-		
-		return ResponseEntity.ok(response);
-	}
-	
 	
 	@ApiOperation(value="Delete Work By ID")
 	@DeleteMapping(value = "/{id}")

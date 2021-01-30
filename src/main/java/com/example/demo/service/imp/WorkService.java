@@ -69,9 +69,7 @@ public class WorkService implements IWorkService {
 			throw new BusinessException(sb.toString());
 		}
 		
-		Obra obra = this.parserToEntity(dto, result);
-		return this.parserToDTO(this.rep.save(obra));
-	
+		return this.parserToDTO(this.rep.save(this.parserToEntity(dto, result)));
 	}
 
 	@Override
@@ -174,16 +172,12 @@ public class WorkService implements IWorkService {
 			result.addError(new ObjectError("Datas", "DataPublicacao ou DataExposicao Devem ser preenchida. "));
 		}
 		
-		if (!StringUtil.isNullOrEmpty(dto.getDataPublicacao())) {
-			if (!DataUtil.isDateValid(dto.getDataPublicacao())) {
-				result.addError(new ObjectError("Datas", "DataPublicacao Inválida. "));
-			}
+		if (!StringUtil.isNullOrEmpty(dto.getDataPublicacao()) && !DataUtil.isDateValid(dto.getDataPublicacao())) {
+			result.addError(new ObjectError("Datas", "DataPublicacao Inválida. "));
 		}
 		
-		if (!StringUtil.isNullOrEmpty(dto.getDataExposicao())) {
-			if (!DataUtil.isDateValid(dto.getDataExposicao())) {
-				result.addError(new ObjectError("Datas", "DataExposicao Inválida. "));
-			}
+		if (!StringUtil.isNullOrEmpty(dto.getDataExposicao()) && !DataUtil.isDateValid(dto.getDataExposicao())) {
+			result.addError(new ObjectError("Datas", "DataExposicao Inválida. "));
 		}
 		
 		// ================================
@@ -191,10 +185,8 @@ public class WorkService implements IWorkService {
 		// ================================
 		if (dto.getId().isPresent()) {
 			Optional<Obra> entity = this.searchById(dto.getId().get());
-			if (entity.isPresent()) {
-				if (entity.get().getNome().equalsIgnoreCase(dto.getNome())) {
-					checkName = false;
-				}				
+			if (entity.isPresent() && entity.get().getNome().equalsIgnoreCase(dto.getNome())) {
+				checkName = false;
 			}
 		}
 		
