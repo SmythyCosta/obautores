@@ -29,7 +29,7 @@ public interface IAutorService {
 	 * @return Obj
 	 * @throws javassist.NotFoundException 
 	 */
-	AutorDTO persistir(AutorDTO dto, BindingResult result) throws BusinessException, NotFoundException, ParseException, javassist.NotFoundException;
+	AutorDTO persistir(AutorDTO dto, BindingResult result) throws BusinessException, NotFoundException, ParseException;
 	
 	
 	/**
