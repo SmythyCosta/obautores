@@ -15,8 +15,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.validation.BindingResult;
 
 import com.example.demo.dto.AutorDTO;
-import com.example.demo.exception.BusinessException;
-import com.example.demo.exception.NotFoundException;
 import com.example.demo.mock.ActorMock;
 import com.example.demo.models.Autor;
 import com.example.demo.repository.AutorRepository;
@@ -36,7 +34,7 @@ public class ActorServiceTest {
 	AutorRepository autorRepository;
 	
 	@Test
-	public void actorPersistir_whenValidInput_thenReturnsOK() throws NotFoundException, BusinessException, ParseException {
+	public void actorPersistir_whenValidInput_thenReturnsOK() throws ParseException {
 
 		Optional<Autor> actorMock = Optional.ofNullable(ActorMock.buildAutor());
 		
