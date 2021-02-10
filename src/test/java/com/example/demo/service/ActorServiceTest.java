@@ -1,6 +1,8 @@
 package com.example.demo.service;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.text.ParseException;
@@ -8,6 +10,8 @@ import java.util.Optional;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -37,6 +41,9 @@ public class ActorServiceTest {
 	@Mock
 	AutorRepository autorRepository;
 	
+	@Captor
+	private ArgumentCaptor<Long> captor;
+	
 	@Test
 	public void actorListarTodos_whenValidInput_thenReturnsOK() throws ParseException {
 
@@ -60,6 +67,19 @@ public class ActorServiceTest {
 		AutorDTO dto = autorService.persistir(ActorMock.buildAutorDTO(), bindingResult);
 		assertEquals(actorMock.get().getId(), dto.getId().get());
     }
+	
+	@Test
+	public void actorRemove_whenValidInput_thenReturnsOK() throws ParseException {
 
+		Optional<Autor> actorMock = Optional.ofNullable(ActorMock.buildAutorNational());
+		Mockito.when(this.autorRepository.findById(111L)).thenReturn(actorMock);
+		
+		autorService.remover(111L);
+		
+		Mockito.verify(autorRepository).deleteById(captor.capture());
+		Long id = captor.getValue();
+		
+		assertNotNull(id);
+    }
 
 }
