@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.text.ParseException;
 import java.util.Optional;
@@ -11,6 +12,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.validation.BindingResult;
 
@@ -34,9 +38,21 @@ public class ActorServiceTest {
 	AutorRepository autorRepository;
 	
 	@Test
+	public void actorListarTodos_whenValidInput_thenReturnsOK() throws ParseException {
+
+		PageRequest pageRequest = PageRequest.of(0, 2, Sort.Direction.ASC, "id");
+		Page<Autor> mockPage = ActorMock.mockPageAutor();
+		
+		Mockito.when(this.autorRepository.findAll(pageRequest)).thenReturn(mockPage);
+
+		Page<AutorDTO> responseAutor = autorService.listarTodos(pageRequest);
+		assertTrue(responseAutor.getContent().size() > 0);
+    }
+	
+	@Test
 	public void actorPersistir_whenValidInput_thenReturnsOK() throws ParseException {
 
-		Optional<Autor> actorMock = Optional.ofNullable(ActorMock.buildAutor());
+		Optional<Autor> actorMock = Optional.ofNullable(ActorMock.buildAutorNational());
 		
 		Mockito.when(this.autorRepository.findById(1L)).thenReturn(actorMock);
 		Mockito.when(this.autorRepository.save(actorMock.get())).thenReturn(actorMock.get());
