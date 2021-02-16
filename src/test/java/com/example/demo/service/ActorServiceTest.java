@@ -23,6 +23,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.validation.BindingResult;
 
 import com.example.demo.dto.AutorDTO;
+import com.example.demo.exception.BusinessException;
 import com.example.demo.mock.ActorMock;
 import com.example.demo.models.Autor;
 import com.example.demo.repository.AutorRepository;
@@ -44,6 +45,8 @@ public class ActorServiceTest {
 	@Captor
 	private ArgumentCaptor<Long> captor;
 	
+	// TODO: List Data
+	
 	@Test
 	public void actorListarTodos_whenValidInput_thenReturnsOK() throws ParseException {
 
@@ -55,6 +58,8 @@ public class ActorServiceTest {
 		Page<AutorDTO> responseAutor = autorService.listarTodos(pageRequest);
 		assertTrue(responseAutor.getContent().size() > 0);
     }
+	
+	// TODO: Persiste Data
 	
 	@Test
 	public void actorPersistir_whenValidInput_thenInsertActor() throws ParseException {
@@ -93,6 +98,20 @@ public class ActorServiceTest {
 		AutorDTO dto = autorService.persistir(ActorMock.buildAutorDTONationalOut(), bindingResult);
 		assertEquals(actorMock.get().getId(), dto.getId().get());
     }
+	
+	@Test(expected = BusinessException.class)
+	public void actorPersistir_whenInvalidInput_businessExceptionEmailCpf() throws BusinessException, ParseException {
+		
+		Mockito.lenient().when(bindingResult.hasErrors()).thenReturn(true);
+		
+		AutorDTO act = ActorMock.buildAutorDTONationalIn();
+		act.setEmail("hhhbr11111111111111111");
+		act.setCpf("123456789");
+				
+		autorService.persistir(act, bindingResult);		
+    }
+	
+	// TODO: Delete Data
 	
 	@Test
 	public void actorRemove_whenValidInput_thenReturnsOK() throws ParseException {
