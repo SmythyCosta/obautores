@@ -75,7 +75,7 @@ public class ActorService implements IAutorService {
 			throw new BusinessException(sb.toString());
 		}
 		
-		return this.parserToDTO(this.repository.save(this.parserToEntity(objDTO, result)));
+		return this.parserToDTO(this.repository.save(this.parserToEntity(objDTO)));
 	}
 
 	@Override
@@ -134,7 +134,7 @@ public class ActorService implements IAutorService {
 		return obra.get().getAutor();
 	}
 
-	private Autor parserToEntity(AutorDTO dto, BindingResult result) throws ParseException {
+	private Autor parserToEntity(AutorDTO dto) throws ParseException {
 		Autor entity = new Autor();
 		
 		if (dto.getId().isPresent()) {		

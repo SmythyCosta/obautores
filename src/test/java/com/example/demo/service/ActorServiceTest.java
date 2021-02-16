@@ -57,23 +57,41 @@ public class ActorServiceTest {
     }
 	
 	@Test
-	public void actorPersistir_whenValidInput_thenReturnsOK() throws ParseException {
+	public void actorPersistir_whenValidInput_thenInsertActor() throws ParseException {
+		
+		/**
+		 *   isNational
+		 * */
+		Optional<Autor> actorMock = Optional.ofNullable(ActorMock.buildAutorNational());
+		Autor act = actorMock.get();
+		
+		Mockito.when(this.autorRepository.save(new Autor())).thenReturn(act);
+				
+		AutorDTO dto = autorService.persistir(ActorMock.buildAutorDTONationalIn(), bindingResult);
+		assertEquals(actorMock.get().getId(), dto.getId().get());
+		
+		/**
+		 *   isForeign
+		 * */
+		Optional<Autor> actorMock2 = Optional.ofNullable(ActorMock.buildAutorForeign());
+		Autor act2 = actorMock2.get();
+		
+		Mockito.when(this.autorRepository.save(new Autor())).thenReturn(act2);
+				
+		AutorDTO dto2 = autorService.persistir(ActorMock.buildAutorDTOFreignIn(), bindingResult);
+		assertEquals(actorMock2.get().getId(), dto2.getId().get());
+    }
+	
+	@Test
+	public void actorPersistir_whenValidInput_thenUpdateActor() throws ParseException {
 
 		Optional<Autor> actorMock = Optional.ofNullable(ActorMock.buildAutorNational());
 		
 		Mockito.when(this.autorRepository.findById(1L)).thenReturn(actorMock);
 		Mockito.when(this.autorRepository.save(actorMock.get())).thenReturn(actorMock.get());
 				
-		AutorDTO dto = autorService.persistir(ActorMock.buildAutorDTONationalIn(), bindingResult);
+		AutorDTO dto = autorService.persistir(ActorMock.buildAutorDTONationalOut(), bindingResult);
 		assertEquals(actorMock.get().getId(), dto.getId().get());
-		
-		Optional<Autor> actor2Mock = Optional.ofNullable(ActorMock.buildAutorForeign());
-		
-		Mockito.when(this.autorRepository.findById(1L)).thenReturn(actor2Mock);
-		Mockito.when(this.autorRepository.save(actorMock.get())).thenReturn(actor2Mock.get());
-				
-		AutorDTO dto2 = autorService.persistir(ActorMock.buildAutorDTOFreignIn(), bindingResult);
-		assertEquals(actor2Mock.get().getId(), dto2.getId().get());
     }
 	
 	@Test

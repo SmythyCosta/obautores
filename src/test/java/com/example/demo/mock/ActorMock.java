@@ -46,7 +46,6 @@ public class ActorMock {
 	
 	public static AutorDTO buildAutorDTONationalIn() throws ParseException {
 		AutorDTO dto = new AutorDTO();
-		//dto.setId(Optional.of(1L));
 		dto.setNome("ROMARIO C SOUSA");
 		dto.setSexo("MASCULINO");
 		dto.setEmail("rnkksd@cc.bb");
