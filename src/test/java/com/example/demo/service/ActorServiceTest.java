@@ -64,8 +64,16 @@ public class ActorServiceTest {
 		Mockito.when(this.autorRepository.findById(1L)).thenReturn(actorMock);
 		Mockito.when(this.autorRepository.save(actorMock.get())).thenReturn(actorMock.get());
 				
-		AutorDTO dto = autorService.persistir(ActorMock.buildAutorDTO(), bindingResult);
+		AutorDTO dto = autorService.persistir(ActorMock.buildAutorDTONationalIn(), bindingResult);
 		assertEquals(actorMock.get().getId(), dto.getId().get());
+		
+		Optional<Autor> actor2Mock = Optional.ofNullable(ActorMock.buildAutorForeign());
+		
+		Mockito.when(this.autorRepository.findById(1L)).thenReturn(actor2Mock);
+		Mockito.when(this.autorRepository.save(actorMock.get())).thenReturn(actor2Mock.get());
+				
+		AutorDTO dto2 = autorService.persistir(ActorMock.buildAutorDTOFreignIn(), bindingResult);
+		assertEquals(actor2Mock.get().getId(), dto2.getId().get());
     }
 	
 	@Test

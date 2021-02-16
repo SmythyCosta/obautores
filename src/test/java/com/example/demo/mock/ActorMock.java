@@ -44,15 +44,27 @@ public class ActorMock {
 		return actor;
     }
 	
-	public static AutorDTO buildAutorDTO() throws ParseException {
+	public static AutorDTO buildAutorDTONationalIn() throws ParseException {
 		AutorDTO dto = new AutorDTO();
-		dto.setId(Optional.of(1L));
+		//dto.setId(Optional.of(1L));
 		dto.setNome("ROMARIO C SOUSA");
 		dto.setSexo("MASCULINO");
 		dto.setEmail("rnkksd@cc.bb");
 		dto.setDataNascimento("2019-04-24 01:06:00");
 		dto.setPaisOrigem("BRASIL");
 		dto.setCpf("841.104.490-49");
+		
+		return dto;
+    }
+	
+	public static AutorDTO buildAutorDTOFreignIn() throws ParseException {
+		AutorDTO dto = new AutorDTO();
+		//dto.setId(Optional.of(1L));
+		dto.setNome("Corey Todd Taylor");
+		dto.setSexo("MASCULINO");
+		dto.setEmail("ctt@spkt.ss");
+		dto.setDataNascimento("2019-04-24 01:06:00");
+		dto.setPaisOrigem("EUA");
 		
 		return dto;
     }
