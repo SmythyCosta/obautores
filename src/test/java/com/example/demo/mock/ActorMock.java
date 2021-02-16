@@ -57,15 +57,26 @@ public class ActorMock {
 		return dto;
     }
 	
+	public static AutorDTO buildAutorDTONationalOut() throws ParseException {
+		AutorDTO dto = buildAutorDTONationalIn();
+		dto.setId(Optional.of(1L));
+		return dto;
+    }
+	
 	public static AutorDTO buildAutorDTOFreignIn() throws ParseException {
 		AutorDTO dto = new AutorDTO();
-		//dto.setId(Optional.of(1L));
 		dto.setNome("Corey Todd Taylor");
 		dto.setSexo("MASCULINO");
 		dto.setEmail("ctt@spkt.ss");
 		dto.setDataNascimento("2019-04-24 01:06:00");
 		dto.setPaisOrigem("EUA");
 		
+		return dto;
+    }
+	
+	public static AutorDTO buildAutorDTOFreignOut() throws ParseException {
+		AutorDTO dto = buildAutorDTONationalIn();
+		dto.setId(Optional.of(1L));
 		return dto;
     }
 	
