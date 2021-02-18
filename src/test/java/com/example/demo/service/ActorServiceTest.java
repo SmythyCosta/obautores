@@ -127,4 +127,13 @@ public class ActorServiceTest {
 		assertNotNull(id);
     }
 
+	@Test
+	public void actorBuscarPorId_whenValidInput_thenReturnsOK() throws ParseException {
+		Optional<Autor> actorMock = Optional.ofNullable(ActorMock.buildAutorNational());
+		Mockito.when(this.autorRepository.findById(1L)).thenReturn(actorMock);
+
+		Optional<Autor> act = autorService.buscarPorId(1L);
+		assertNotNull(act.get().getId());
+	}
+
 }
