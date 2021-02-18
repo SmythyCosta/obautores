@@ -46,6 +46,7 @@ public class ActorServiceTest {
 	private ArgumentCaptor<Long> captor;
 
 	public static final String ACTOR_NAME = "ROMARIO C SOUSA";
+	public static final String ACTOR_CPF = "12334565433";
 	
 	// TODO: List Data
 	
@@ -147,6 +148,13 @@ public class ActorServiceTest {
 		assertNotNull(act.get().getId());
 	}
 
+	@Test
+	public void actorBuscarPorCPF_whenValidInput_thenReturnsOK() throws ParseException {
+		Autor actorMock = ActorMock.buildAutorNational();
+		Mockito.when(this.autorRepository.findByCpf(ACTOR_CPF)).thenReturn(actorMock);
 
+		Optional<Autor> act = autorService.buscarPorCpf(ACTOR_CPF);
+		assertNotNull(act.get().getId());
+	}
 
 }
