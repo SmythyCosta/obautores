@@ -44,6 +44,8 @@ public class ActorServiceTest {
 	
 	@Captor
 	private ArgumentCaptor<Long> captor;
+
+	public static final String ACTOR_NAME = "ROMARIO C SOUSA";
 	
 	// TODO: List Data
 	
@@ -135,5 +137,16 @@ public class ActorServiceTest {
 		Optional<Autor> act = autorService.buscarPorId(1L);
 		assertNotNull(act.get().getId());
 	}
+
+	@Test
+	public void actorBuscarPorNome_whenValidInput_thenReturnsOK() throws ParseException {
+		Optional<Autor> actorMock = Optional.ofNullable(ActorMock.buildAutorNational());
+		Mockito.when(this.autorRepository.findByNome(ACTOR_NAME)).thenReturn(actorMock);
+
+		Optional<Autor> act = autorService.buscarPorNome (ACTOR_NAME);
+		assertNotNull(act.get().getId());
+	}
+
+
 
 }
