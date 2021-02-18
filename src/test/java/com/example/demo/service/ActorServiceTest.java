@@ -6,8 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.text.ParseException;
+import java.util.List;
 import java.util.Optional;
 
+import com.example.demo.exception.NotFoundException;
+import com.example.demo.models.Obra;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -47,6 +50,8 @@ public class ActorServiceTest {
 
 	public static final String ACTOR_NAME = "ROMARIO C SOUSA";
 	public static final String ACTOR_CPF = "12334565433";
+	public static final String ACTOR_EMAIL = "beltrano@email.com";
+
 	
 	// TODO: List Data
 	
@@ -155,6 +160,29 @@ public class ActorServiceTest {
 
 		Optional<Autor> act = autorService.buscarPorCpf(ACTOR_CPF);
 		assertNotNull(act.get().getId());
+	}
+
+	@Test
+	public void actorBuscarPorEmail_whenValidInput_thenReturnsOK() throws ParseException {
+		Autor actorMock = ActorMock.buildAutorNational();
+		Mockito.when(this.autorRepository.findByEmail(ACTOR_EMAIL)).thenReturn(actorMock);
+
+		Optional<Autor> act = autorService.buscarPorEmail(ACTOR_EMAIL);
+		assertNotNull(act.get().getId());
+	}
+
+
+
+	public List<Autor> buscarAutoresPorObra(Long idObra){
+		log.info("Buscando Autores pelo ID Obra {}", idObra);
+
+		Optional<Obra> obra = this.workRepository.findById(idObra);
+		if (!obra.isPresent()) {
+			log.info("Obra não encontrado para o ID: {}", idObra);
+			throw new NotFoundException("Obra não encontrado");
+		}
+
+		return obra.get().getAutor();
 	}
 
 }
