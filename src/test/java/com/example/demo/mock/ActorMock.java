@@ -98,4 +98,21 @@ public class ActorMock {
 		return new PageImpl<>(mockListActor, pageRequest, 1);
 	}
 
+	public static List<Autor> buildListAutor() throws ParseException {
+
+		List<Autor> mockListActor = new ArrayList<>();
+		Autor actor = new Autor();
+
+		actor.setId(1L);
+		actor.setNome("Corey Todd Taylor");
+		actor.setSexo(SexoEnum.MASCULINO);
+		actor.setEmail("ctt@spkt.ss");
+		actor.setDataNascimento(mockDate());
+		actor.setPaisOrigem("EUA");
+		actor.setCpf("");
+
+		mockListActor.add(actor);
+		return mockListActor;
+	}
+
 }

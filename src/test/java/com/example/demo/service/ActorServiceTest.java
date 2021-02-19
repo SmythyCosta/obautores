@@ -177,15 +177,10 @@ public class ActorServiceTest {
 	}
 
 	@Test
-	public void actorBuscarAutoresPorObra_whenValidInput_thenReturnsOK() {
+	public void actorBuscarAutoresPorObra_whenValidInput_thenReturnsOK() throws ParseException {
 
 		Optional<Obra> obra = Optional.ofNullable(WorkMock.buildWork());
 		Mockito.when(this.workRepository.findById(1L)).thenReturn(obra);
-
-		//Optional<Obra> obraMock = Optional.ofNullable(wrk);
-
-		//Mockito.when(this.workRepository.findById(1L)).thenReturn(obraMock);
-		//Mockito.when(this.autorRepository.findByEmail(ACTOR_EMAIL)).thenReturn(actorMock);
 
 		List<Autor> act = autorService.buscarAutoresPorObra(1L);
 		assertNotNull(act.get(0).getId());

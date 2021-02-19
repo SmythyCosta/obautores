@@ -18,8 +18,10 @@ import java.util.Optional;
 
 public class WorkMock {
 	
-	public static com.example.demo.models.Obra buildWork() {
-		return new Obra(1L, "Work_Test", "Describe_Test", "Image", null, null);
-    }
+	public static com.example.demo.models.Obra buildWork() throws ParseException {
+		Obra o = new Obra(1L, "Work_Test", "Describe_Test", "Image", null, null);
+		o.setAutor(ActorMock.buildListAutor());
+		return o;
+	}
 
 }
